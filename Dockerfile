@@ -2,7 +2,7 @@
 FROM node:18-alpine AS frontend-build
 WORKDIR /app/frontend
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm install
 COPY frontend/ ./
 ENV REACT_APP_API_URL=/api
 RUN npm run build
@@ -13,7 +13,7 @@ WORKDIR /app
 
 # Copy backend
 COPY backend/package*.json ./backend/
-RUN cd backend && npm ci --production
+RUN cd backend && npm install --production
 
 COPY backend/ ./backend/
 
