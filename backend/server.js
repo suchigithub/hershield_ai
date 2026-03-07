@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const cors = require('cors');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
@@ -50,8 +51,17 @@ app.use('/api/herudaan', herudaanRoutes);
 app.use('/api/heradhikar', heradhikarRoutes);
 app.use('/api/hershiksha', hershikshaRoutes);
 
-// ── 404 handler ──
-app.use((_req, res) => res.status(404).json({ message: 'Route not found.' }));
+// ── Serve React frontend in production ──
+const frontendBuild = path.join(__dirname, '..', 'frontend', 'build');
+app.use(express.static(frontendBuild));
+
+// ── 404 for API routes ──
+app.all('/api/*', (_req, res) => res.status(404).json({ message: 'Route not found.' }));
+
+// ── SPA fallback — serve index.html for all non-API routes ──
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(frontendBuild, 'index.html'));
+});
 
 // ── Global error handler ──
 app.use((err, _req, res, _next) => {
