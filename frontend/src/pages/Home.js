@@ -1,7 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
-const Home = () => (
+const Home = () => {
+  const [installPrompt, setInstallPrompt] = useState(null);
+
+  useEffect(() => {
+    const handler = (e) => { e.preventDefault(); setInstallPrompt(e); };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstall = async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    await installPrompt.userChoice;
+    setInstallPrompt(null);
+  };
+
+  return (
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 60px)', background: 'linear-gradient(180deg, #fce4ec 0%, #f3e5f5 50%, #ede7f6 100%)', padding: '1.5rem' }}>
     <div style={{ textAlign: 'center', maxWidth: '600px', width: '100%' }}>
       <div style={{ fontSize: '1rem', color: '#ad1457', fontWeight: 600, marginBottom: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>🎀 Happy Women's Day 2026</div>
@@ -27,8 +43,14 @@ const Home = () => (
       <p style={{ marginTop: '2rem', color: '#ad1457', fontSize: '0.85rem', fontStyle: 'italic' }}>
         "Here's to strong women. May we know them. May we be them. May we raise them." 💜
       </p>
+      {installPrompt && (
+        <button onClick={handleInstall} style={{ marginTop: '1rem', padding: '0.75rem 2rem', background: 'linear-gradient(135deg, #ec407a 0%, #ab47bc 100%)', color: '#fff', border: 'none', borderRadius: '25px', fontSize: '1rem', fontWeight: 600, cursor: 'pointer', boxShadow: '0 4px 15px rgba(236,64,122,0.3)' }}>
+          📲 Install App
+        </button>
+      )}
     </div>
   </div>
-);
+  );
+};
 
 export default Home;

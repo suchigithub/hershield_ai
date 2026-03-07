@@ -1,0 +1,64 @@
+{
+  "name": "Hershild — Women Empowerment",
+  "short_name": "Hershild",
+  "description": "Empowering women with safety, health, finance, education, career & rights tools. Happy Women's Day!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fce4ec",
+  "theme_color": "#ad1457",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["health", "education", "finance", "lifestyle"],
+  "icons": [
+    {
+      "src": "/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "/dashboard",
+      "description": "Go to Hershild Dashboard"
+    },
+    {
+      "name": "SOS Safety",
+      "url": "/hersuraksha",
+      "description": "Emergency SOS"
+    }
+  ]
+}
