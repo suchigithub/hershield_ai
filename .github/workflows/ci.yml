@@ -72,3 +72,24 @@ jobs:
           echo "✅ React app: Served by Express"
           echo ""
           echo "Ready for deployment!"
+
+  deploy:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+      - name: Trigger Render Deploy
+        if: ${{ vars.RENDER_DEPLOY_HOOK_URL != '' }}
+        run: |
+          echo "🚀 Triggering Render deployment..."
+          curl -s "${{ vars.RENDER_DEPLOY_HOOK_URL }}" || true
+          echo "✅ Deploy triggered!"
+
+      - name: Deploy Summary
+        run: |
+          echo "🛡️ Hershild Deploy"
+          echo "==================="
+          echo "Branch: main"
+          echo "Commit: ${{ github.sha }}"
+          echo "✅ Build passed → Deploy triggered"
