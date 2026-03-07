@@ -30,7 +30,7 @@ const Register = () => {
   return (
     <div style={styles.wrapper}>
       <form onSubmit={handleSubmit} style={styles.card}>
-        <h2 style={styles.title}>Create your Hershild Account</h2>
+        <h2 style={styles.title}>Join Hershild 🌸</h2>
 
         {error && <div style={styles.error}>{error}</div>}
 
@@ -88,37 +88,39 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: 'calc(100vh - 60px)',
-    background: '#f5f5ff',
+    background: 'linear-gradient(180deg, #fce4ec 0%, #f3e5f5 100%)',
     padding: '1rem',
   },
   card: {
-    background: '#fff',
+    background: 'rgba(255,255,255,0.95)',
     padding: '2rem',
-    borderRadius: '12px',
-    boxShadow: '0 4px 24px rgba(108,99,255,0.12)',
+    borderRadius: '16px',
+    boxShadow: '0 4px 24px rgba(173,20,87,0.12)',
+    border: '1px solid #f8bbd0',
     width: '100%',
     maxWidth: '420px',
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
   },
-  title: { textAlign: 'center', color: '#333', marginBottom: '0.5rem' },
+  title: { textAlign: 'center', color: '#7b1fa2', marginBottom: '0.5rem' },
   input: {
     padding: '0.75rem 1rem',
-    border: '1px solid #ddd',
-    borderRadius: '8px',
+    border: '1px solid #e1bee7',
+    borderRadius: '10px',
     fontSize: '1rem',
     outline: 'none',
   },
   btn: {
     padding: '0.75rem',
-    background: '#6c63ff',
+    background: 'linear-gradient(135deg, #ec407a 0%, #ab47bc 100%)',
     color: '#fff',
     border: 'none',
-    borderRadius: '8px',
+    borderRadius: '10px',
     fontSize: '1rem',
     fontWeight: 600,
     cursor: 'pointer',
+    boxShadow: '0 4px 15px rgba(236,64,122,0.3)',
   },
   error: {
     background: '#ffe0e0',

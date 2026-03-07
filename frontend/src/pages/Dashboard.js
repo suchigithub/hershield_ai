@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 const modules = [
-  { name: 'HerSuraksha', icon: '🛡️', desc: 'Safety & SOS', path: '/hersuraksha', color: '#c62828', bg: '#ffebee' },
-  { name: 'HerPaisa', icon: '💰', desc: 'Finance', path: '/herpaisa', color: '#1565c0', bg: '#e3f2fd' },
-  { name: 'HerSwasthya', icon: '❤️', desc: 'Health', path: '/herswasthya', color: '#c62828', bg: '#fce4ec' },
-  { name: 'HerShanti', icon: '🧘', desc: 'Mental Wellness', path: '/hershanti', color: '#6a1b9a', bg: '#f3e5f5' },
-  { name: 'HerUdaan', icon: '🚀', desc: 'Career Restart', path: '/herudaan', color: '#e65100', bg: '#fff3e0' },
-  { name: 'HerAdhikar', icon: '⚖️', desc: 'Govt. Schemes', path: '/heradhikar', color: '#2e7d32', bg: '#e8f5e9' },
-  { name: 'HerShiksha', icon: '🎓', desc: 'Education', path: '/hershiksha', color: '#00838f', bg: '#e0f7fa' },
+  { name: 'HerSuraksha', icon: '🛡️', desc: 'Safety & SOS', path: '/hersuraksha', color: '#c2185b', bg: '#fce4ec' },
+  { name: 'HerPaisa', icon: '💰', desc: 'Finance', path: '/herpaisa', color: '#7b1fa2', bg: '#f3e5f5' },
+  { name: 'HerSwasthya', icon: '❤️', desc: 'Health', path: '/herswasthya', color: '#ad1457', bg: '#fce4ec' },
+  { name: 'HerShanti', icon: '🧘', desc: 'Mental Wellness', path: '/hershanti', color: '#6a1b9a', bg: '#ede7f6' },
+  { name: 'HerUdaan', icon: '🚀', desc: 'Career Restart', path: '/herudaan', color: '#8e24aa', bg: '#f3e5f5' },
+  { name: 'HerAdhikar', icon: '⚖️', desc: 'Govt. Schemes', path: '/heradhikar', color: '#ad1457', bg: '#fce4ec' },
+  { name: 'HerShiksha', icon: '🎓', desc: 'Education', path: '/hershiksha', color: '#7b1fa2', bg: '#ede7f6' },
 ];
 
 const Dashboard = () => {
@@ -17,11 +17,12 @@ const Dashboard = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="page-wrapper" style={{ background: '#f5f5ff' }}>
+    <div className="page-wrapper" style={{ background: 'linear-gradient(180deg, #fce4ec 0%, #f3e5f5 100%)' }}>
       <div style={{ maxWidth: '800px', margin: '0 auto' }}>
         {/* Greeting banner */}
-        <div className="hero-section" style={{ background: 'linear-gradient(135deg, #6c63ff 0%, #3f3d94 100%)', color: '#fff', marginBottom: '1.5rem' }}>
-          <h2 style={{ marginBottom: '0.25rem', color: '#fff', fontSize: '1.5rem' }}>🛡️ Hershild Dashboard</h2>
+        <div className="hero-section" style={{ background: 'linear-gradient(135deg, #ec407a 0%, #ab47bc 50%, #7b1fa2 100%)', color: '#fff', marginBottom: '1.5rem', boxShadow: '0 4px 20px rgba(236,64,122,0.3)' }}>
+          <div style={{ fontSize: '0.85rem', opacity: 0.9, marginBottom: '0.3rem' }}>🎀 Happy Women's Day 2026</div>
+          <h2 style={{ marginBottom: '0.25rem', color: '#fff', fontSize: '1.5rem' }}>🌸 Hershild Dashboard</h2>
           <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.05rem', margin: 0 }}>
             Welcome, <strong>{user?.name}</strong>!
           </p>
@@ -44,7 +45,7 @@ const Dashboard = () => {
         </div>
 
         {/* User info */}
-        <div className="card" style={{ boxShadow: '0 4px 24px rgba(108,99,255,0.12)' }}>
+        <div className="card" style={{ boxShadow: '0 4px 24px rgba(173,20,87,0.1)', border: '1px solid #f8bbd0' }}>
           <h3 style={{ marginBottom: '0.75rem', color: '#555' }}>Your Info</h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <div style={styles.infoCard}>
@@ -119,11 +120,11 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     padding: '0.6rem 1rem',
-    background: '#f9f9ff',
+    background: '#fce4ec',
     borderRadius: '8px',
-    border: '1px solid #eee',
+    border: '1px solid #f8bbd0',
   },
-  label: { fontWeight: 600, color: '#6c63ff' },
+  label: { fontWeight: 600, color: '#ad1457' },
   value: { color: '#333' },
 };
 

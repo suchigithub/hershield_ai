@@ -49,7 +49,7 @@ const VerifyOTP = () => {
   return (
     <div style={styles.wrapper}>
       <form onSubmit={handleVerify} style={styles.card}>
-        <h2 style={styles.title}>Verify OTP</h2>
+        <h2 style={styles.title}>Verify OTP 💜</h2>
         <p style={styles.sub}>
           Enter the 6‑digit code sent to your email/phone.
         </p>
@@ -103,21 +103,22 @@ const styles = {
     justifyContent: 'center',
     alignItems: 'center',
     minHeight: 'calc(100vh - 60px)',
-    background: '#f5f5ff',
+    background: 'linear-gradient(180deg, #fce4ec 0%, #f3e5f5 100%)',
     padding: '1rem',
   },
   card: {
-    background: '#fff',
+    background: 'rgba(255,255,255,0.95)',
     padding: '2rem',
-    borderRadius: '12px',
-    boxShadow: '0 4px 24px rgba(108,99,255,0.12)',
+    borderRadius: '16px',
+    boxShadow: '0 4px 24px rgba(173,20,87,0.12)',
+    border: '1px solid #f8bbd0',
     width: '100%',
     maxWidth: '420px',
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
   },
-  title: { textAlign: 'center', color: '#333' },
+  title: { textAlign: 'center', color: '#7b1fa2' },
   sub: { textAlign: 'center', color: '#777', fontSize: '0.9rem' },
   input: {
     padding: '0.75rem 1rem',
@@ -130,20 +131,21 @@ const styles = {
   },
   btn: {
     padding: '0.75rem',
-    background: '#6c63ff',
+    background: 'linear-gradient(135deg, #ec407a 0%, #ab47bc 100%)',
     color: '#fff',
     border: 'none',
-    borderRadius: '8px',
+    borderRadius: '10px',
     fontSize: '1rem',
     fontWeight: 600,
     cursor: 'pointer',
+    boxShadow: '0 4px 15px rgba(236,64,122,0.3)',
   },
   resendBtn: {
     padding: '0.6rem',
     background: 'transparent',
-    color: '#6c63ff',
-    border: '1px solid #6c63ff',
-    borderRadius: '8px',
+    color: '#ad1457',
+    border: '1px solid #ec407a',
+    borderRadius: '10px',
     cursor: 'pointer',
     fontWeight: 500,
   },

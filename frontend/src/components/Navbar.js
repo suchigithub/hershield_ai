@@ -16,9 +16,9 @@ const Navbar = () => {
   const closeMenu = () => setMenuOpen(false);
 
   return (
-    <nav className="nav-bar" style={{ background: 'linear-gradient(135deg, #6c63ff 0%, #3f3d94 100%)', boxShadow: '0 2px 8px rgba(0,0,0,0.15)' }}>
+    <nav className="nav-bar" style={{ background: 'linear-gradient(135deg, #ad1457 0%, #7b1fa2 50%, #6a1b9a 100%)', boxShadow: '0 2px 12px rgba(173,20,87,0.3)' }}>
       <Link to="/" className="nav-brand">
-        🛡️ Hershild
+        🌸 Hershild
       </Link>
 
       <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">
