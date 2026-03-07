@@ -53,10 +53,8 @@ exports.register = async (req, res) => {
       userId: user._id,
     };
 
-    // In dev mode, include OTP in response so it's visible without an email provider
-    if (process.env.NODE_ENV !== 'production') {
-      response.devOtp = otpCode;
-    }
+    // Include OTP in response (no real email/SMS provider configured)
+    response.devOtp = otpCode;
 
     return res.status(201).json(response);
   } catch (err) {
@@ -120,9 +118,7 @@ exports.resendOTP = async (req, res) => {
     await sendOTP({ email, code: otpCode });
 
     const response = { message: 'OTP resent successfully.' };
-    if (process.env.NODE_ENV !== 'production') {
-      response.devOtp = otpCode;
-    }
+    response.devOtp = otpCode;
     return res.json(response);
   } catch (err) {
     console.error('[Hershild] resendOTP error:', err);
