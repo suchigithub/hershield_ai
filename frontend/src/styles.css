@@ -1,0 +1,452 @@
+/* ── HerShild Global Responsive Styles ────────────── */
+
+/* Reset & Base */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -ms-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+img, video, svg { max-width: 100%; height: auto; }
+input, textarea, select, button { font-family: inherit; }
+a { color: inherit; }
+
+/* ── Responsive Utilities ──────────────────────── */
+
+/* Navigation */
+.nav-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.nav-brand {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.nav-link {
+  color: #fff;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.nav-link:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+.nav-greeting {
+  font-weight: 400;
+  opacity: 0.9;
+  font-size: 0.9rem;
+}
+
+.nav-logout-btn {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.4);
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.nav-logout-btn:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+.hamburger {
+  display: none;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.3rem;
+}
+
+/* ── Page Wrappers ─────────────────────────────── */
+.page-wrapper {
+  padding: 2rem;
+  min-height: calc(100vh - 60px);
+  max-width: 750px;
+  margin: 0 auto;
+}
+
+/* ── Tab Bars ──────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  gap: 0.3rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+/* ── Cards ─────────────────────────────────────── */
+.card {
+  background: #fff;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  margin-bottom: 0.75rem;
+}
+
+/* ── Grids ─────────────────────────────────────── */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.grid-auto {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.75rem;
+}
+
+/* ── Forms ─────────────────────────────────────── */
+.form-input {
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-btn {
+  width: 100%;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.form-btn:hover { opacity: 0.9; }
+.form-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ── Hero Section ──────────────────────────────── */
+.hero-section {
+  text-align: center;
+  padding: 2rem;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+}
+
+/* ── Dashboard Module Grid ─────────────────────── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.module-card {
+  padding: 1.25rem 0.75rem;
+  border-radius: 14px;
+  border: 1px solid;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.module-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+}
+
+/* ── Stat Grids ────────────────────────────────── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+/* ── Filter Pills ──────────────────────────────── */
+.filter-pills {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+/* ── Badge ─────────────────────────────────────── */
+.badge {
+  display: inline-block;
+  padding: 0.2rem 0.55rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+   ═══════════════════════════════════════════════════ */
+
+/* ── Tablet & below (≤ 768px) ──────────────────── */
+@media (max-width: 768px) {
+  .page-wrapper {
+    padding: 1rem;
+  }
+
+  .hero-section {
+    padding: 1.5rem 1rem;
+  }
+
+  .hero-section h2 {
+    font-size: 1.3rem;
+  }
+
+  .hero-section p {
+    font-size: 0.85rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .module-card {
+    padding: 1rem 0.5rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .tab-bar {
+    gap: 0.2rem;
+  }
+
+  .tab-bar button {
+    font-size: 0.75rem !important;
+    padding: 0.4rem 0.5rem !important;
+  }
+
+  .card {
+    padding: 0.85rem 1rem;
+  }
+}
+
+/* ── Mobile (≤ 480px) ──────────────────────────── */
+@media (max-width: 480px) {
+  .nav-bar {
+    padding: 0.6rem 1rem;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .nav-links {
+    display: none;
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    padding-top: 0.5rem;
+  }
+
+  .nav-links.open {
+    display: flex;
+  }
+
+  .nav-greeting {
+    font-size: 0.8rem;
+  }
+
+  .page-wrapper {
+    padding: 0.75rem;
+  }
+
+  .hero-section {
+    padding: 1.25rem 0.75rem;
+    border-radius: 12px;
+  }
+
+  .hero-section h2 {
+    font-size: 1.15rem;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+
+  .module-card {
+    padding: 0.85rem 0.5rem;
+    border-radius: 10px;
+  }
+
+  .module-card .module-icon {
+    font-size: 1.8rem;
+  }
+
+  .module-card .module-name {
+    font-size: 0.82rem;
+  }
+
+  .module-card .module-desc {
+    font-size: 0.72rem;
+  }
+
+  .grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .tab-bar {
+    gap: 0.15rem;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.25rem;
+  }
+
+  .tab-bar::-webkit-scrollbar { display: none; }
+
+  .tab-bar button {
+    font-size: 0.7rem !important;
+    padding: 0.35rem 0.45rem !important;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .card {
+    padding: 0.75rem 0.85rem;
+    border-radius: 10px;
+  }
+
+  .card h4 {
+    font-size: 0.95rem;
+  }
+
+  .form-input {
+    font-size: 0.9rem;
+    padding: 0.55rem 0.65rem;
+  }
+
+  .form-btn {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+
+  .filter-pills {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.25rem;
+  }
+
+  .filter-pills::-webkit-scrollbar { display: none; }
+
+  .filter-pills button {
+    flex-shrink: 0;
+    white-space: nowrap;
+    font-size: 0.72rem !important;
+  }
+
+  /* Auth cards */
+  .auth-card {
+    padding: 1.5rem !important;
+    margin: 0 0.5rem;
+    max-width: 100% !important;
+  }
+
+  /* SOS button */
+  .sos-btn {
+    font-size: 1.1rem !important;
+    padding: 0.85rem !important;
+  }
+
+  /* Quick action buttons */
+  .quick-actions {
+    flex-direction: column;
+  }
+
+  .quick-actions a,
+  .quick-actions button {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* ── Large Desktop (≥ 1200px) ──────────────────── */
+@media (min-width: 1200px) {
+  .page-wrapper {
+    max-width: 800px;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ── Touch-friendly tap targets ────────────────── */
+@media (hover: none) and (pointer: coarse) {
+  button, a, .module-card, .tab-bar button, .filter-pills button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .form-input, .form-btn, select, textarea {
+    min-height: 44px;
+    font-size: 16px; /* prevents iOS zoom on focus */
+  }
+}
+
+/* ── Print ─────────────────────────────────────── */
+@media print {
+  .nav-bar, .tab-bar, .filter-pills, button, .hamburger { display: none !important; }
+  .page-wrapper { max-width: 100%; padding: 0; }
+  .card { box-shadow: none; border: 1px solid #ddd; break-inside: avoid; }
+}
