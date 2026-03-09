@@ -34,12 +34,6 @@ const Home = () => {
           Sign In
         </Link>
       </div>
-      <div className="grid-2" style={{ maxWidth: '500px', margin: '0 auto' }}>
-        <div className="card" style={{ fontSize: '0.9rem', color: '#7b1fa2', textAlign: 'center', background: 'rgba(255,255,255,0.9)', border: '1px solid #f8bbd0' }}>🛡️ Safety & SOS</div>
-        <div className="card" style={{ fontSize: '0.9rem', color: '#7b1fa2', textAlign: 'center', background: 'rgba(255,255,255,0.9)', border: '1px solid #e1bee7' }}>❤️ Health & Wellness</div>
-        <div className="card" style={{ fontSize: '0.9rem', color: '#7b1fa2', textAlign: 'center', background: 'rgba(255,255,255,0.9)', border: '1px solid #ce93d8' }}>💰 Finance & Career</div>
-        <div className="card" style={{ fontSize: '0.9rem', color: '#7b1fa2', textAlign: 'center', background: 'rgba(255,255,255,0.9)', border: '1px solid #f48fb1' }}>🎓 Education & Rights</div>
-      </div>
       <p style={{ marginTop: '2rem', color: '#ad1457', fontSize: '0.85rem', fontStyle: 'italic' }}>
         "Here's to strong women. May we know them. May we be them. May we raise them." 💜
       </p>
