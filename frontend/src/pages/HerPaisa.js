@@ -29,6 +29,9 @@ const HerPaisa = () => {
   const [payAmount, setPayAmount] = useState('');
   const [payNote, setPayNote] = useState('');
   const [paymentLinks, setPaymentLinks] = useState(null);
+  const [verifying, setVerifying] = useState(false);
+  const [paymentVerified, setPaymentVerified] = useState(false);
+  const [copied, setCopied] = useState('');
 
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
@@ -121,8 +124,38 @@ const HerPaisa = () => {
     try {
       const { data } = await herpaisaService.generatePaymentLink({ amount: Number(payAmount), note: payNote });
       setPaymentLinks(data.payment);
+      setPaymentVerified(false);
+      setCopied('');
       flash('Payment link generated!');
     } catch (e) { flash(e.response?.data?.message || 'Failed', true); }
+  };
+
+  const handleCopyLink = (link, label) => {
+    navigator.clipboard.writeText(link).then(() => {
+      setCopied(label);
+      setTimeout(() => setCopied(''), 2000);
+    }).catch(() => flash('Failed to copy', true));
+  };
+
+  const handleVerifyPayment = async () => {
+    if (!paymentLinks) return;
+    setVerifying(true);
+    try {
+      const { data } = await herpaisaService.verifyPayment({
+        txnRef: paymentLinks.txnRef,
+        amount: paymentLinks.amount,
+      });
+      if (data.result?.verified) {
+        setPaymentVerified(true);
+        flash('Payment verified successfully!');
+      } else {
+        flash('Payment not yet received. Please try again.', true);
+      }
+    } catch (e) {
+      flash(e.response?.data?.message || 'Verification failed', true);
+    } finally {
+      setVerifying(false);
+    }
   };
 
   return (
@@ -136,7 +169,7 @@ const HerPaisa = () => {
       {/* Tab bar */}
       <div className="tab-bar" style={s.tabs}>
         {TABS.map((t) => (
-          <button key={t} onClick={() => { setTab(t); setPaymentLinks(null); }}
+          <button key={t} onClick={() => { setTab(t); setPaymentLinks(null); setPaymentVerified(false); setCopied(''); }}
             style={{ ...s.tab, ...(tab === t ? s.tabActive : {}) }}>
             {t === 'savings' ? '🐖 Savings' : t === 'transactions' ? '📊 Transactions' :
              t === 'budgets' ? '📋 Budgets' : t === 'tips' ? '💡 Tips' : '💳 UPI Pay'}
@@ -284,6 +317,7 @@ const HerPaisa = () => {
         <div>
           <div style={{ ...s.card, background: '#f0f4ff', textAlign: 'center' }}>
             <p style={{ color: '#555', marginBottom: '0.5rem' }}>Pay via UPI — Works with Google Pay, BharatPe, PhonePe & more</p>
+            <p style={{ color: '#888', fontSize: '0.8rem' }}>Generate a payment link below. On mobile, tap to open your UPI app. On desktop, copy the link or scan the QR-friendly URI.</p>
           </div>
           <form onSubmit={handleGeneratePayLink} style={s.form}>
             <input type="number" placeholder="₹ Amount" value={payAmount}
@@ -293,25 +327,75 @@ const HerPaisa = () => {
             <button type="submit" style={s.btn}>Generate Payment Link</button>
           </form>
           {paymentLinks && (
-            <div style={{ ...s.card, background: '#e8f5e9' }}>
-              <h4 style={{ color: '#2e7d32', marginBottom: '0.75rem' }}>Payment Links Ready — ₹{paymentLinks.amount}</h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div style={{ ...s.card, background: paymentVerified ? '#e8f5e9' : '#fff8e1' }}>
+              <h4 style={{ color: paymentVerified ? '#2e7d32' : '#f57f17', marginBottom: '0.75rem' }}>
+                {paymentVerified ? '✅ Payment Verified' : `💳 Payment Links Ready — ₹${paymentLinks.amount}`}
+              </h4>
+
+              {/* UPI URI copy section */}
+              <div style={{ background: '#f5f5f5', padding: '0.75rem', borderRadius: '8px', marginBottom: '1rem', wordBreak: 'break-all', fontSize: '0.8rem', color: '#555' }}>
+                <strong>UPI Link:</strong> {paymentLinks.upiURI}
+              </div>
+              <button onClick={() => handleCopyLink(paymentLinks.upiURI, 'upi')}
+                style={{ ...s.btn, background: copied === 'upi' ? '#4caf50' : '#ff9800', marginBottom: '1rem', width: '100%' }}>
+                {copied === 'upi' ? '✓ Copied!' : '📋 Copy UPI Link'}
+              </button>
+
+              {/* App-specific deep links */}
+              <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>Open in UPI App (mobile only):</p>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
                 <a href={paymentLinks.googlePay} style={s.payBtn}>
-                  <span>💚</span> Pay with Google Pay
-                </a>
-                <a href={paymentLinks.bharatPe} style={{ ...s.payBtn, background: '#1565c0' }}>
-                  <span>🔵</span> Pay with BharatPe
+                  <span>💚</span> Google Pay
                 </a>
                 <a href={paymentLinks.phonePe} style={{ ...s.payBtn, background: '#6a1b9a' }}>
-                  <span>💜</span> Pay with PhonePe
+                  <span>💜</span> PhonePe
                 </a>
-                <a href={paymentLinks.upiURI} style={{ ...s.payBtn, background: '#555' }}>
-                  <span>📱</span> Open Any UPI App
+                <a href={paymentLinks.upiURI} style={{ ...s.payBtn, background: '#1565c0' }}>
+                  <span>📱</span> Any UPI App
                 </a>
               </div>
+
+              {/* Web fallback link */}
+              {paymentLinks.webLink && (
+                <div style={{ marginBottom: '1rem' }}>
+                  <p style={{ fontSize: '0.85rem', color: '#666', marginBottom: '0.5rem', fontWeight: 600 }}>Web Payment (works on desktop):</p>
+                  <a href={paymentLinks.webLink} target="_blank" rel="noopener noreferrer"
+                    style={{ ...s.payBtn, background: '#00796b', textDecoration: 'none' }}>
+                    <span>🌐</span> Pay via Web Link
+                  </a>
+                </div>
+              )}
+
+              {/* Copy individual links */}
+              <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                <button onClick={() => handleCopyLink(paymentLinks.googlePay, 'gpay')}
+                  style={{ ...s.copyBtn, ...(copied === 'gpay' ? { background: '#4caf50', color: '#fff' } : {}) }}>
+                  {copied === 'gpay' ? '✓ Copied' : 'Copy GPay Link'}
+                </button>
+                <button onClick={() => handleCopyLink(paymentLinks.phonePe, 'phonepe')}
+                  style={{ ...s.copyBtn, ...(copied === 'phonepe' ? { background: '#4caf50', color: '#fff' } : {}) }}>
+                  {copied === 'phonepe' ? '✓ Copied' : 'Copy PhonePe Link'}
+                </button>
+                {paymentLinks.webLink && (
+                  <button onClick={() => handleCopyLink(paymentLinks.webLink, 'web')}
+                    style={{ ...s.copyBtn, ...(copied === 'web' ? { background: '#4caf50', color: '#fff' } : {}) }}>
+                    {copied === 'web' ? '✓ Copied' : 'Copy Web Link'}
+                  </button>
+                )}
+              </div>
+
+              {/* Verify payment */}
+              {!paymentVerified && (
+                <button onClick={handleVerifyPayment} disabled={verifying}
+                  style={{ ...s.btn, background: verifying ? '#999' : '#2e7d32', width: '100%' }}>
+                  {verifying ? '⏳ Verifying...' : '✔ I have paid — Verify Payment'}
+                </button>
+              )}
+
               <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: '#666' }}>
                 <div><strong>Ref:</strong> {paymentLinks.txnRef}</div>
                 <div><strong>VPA:</strong> {paymentLinks.vpa}</div>
+                <div><strong>Merchant:</strong> {paymentLinks.merchant}</div>
               </div>
             </div>
           )}
@@ -339,6 +423,7 @@ const s = {
   error: { background: '#ffe0e0', color: '#c00', padding: '0.6rem 1rem', borderRadius: '8px', marginBottom: '1rem', fontSize: '0.9rem' },
   empty: { textAlign: 'center', color: '#999', padding: '2rem' },
   payBtn: { display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', background: '#2e7d32', color: '#fff', borderRadius: '8px', textDecoration: 'none', fontWeight: 600, fontSize: '0.95rem', justifyContent: 'center' },
+  copyBtn: { padding: '0.4rem 0.75rem', border: '1px solid #ccc', borderRadius: '6px', background: '#fff', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 500, color: '#555' },
 };
 
 export default HerPaisa;
