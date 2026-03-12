@@ -9,7 +9,7 @@ exports.getProfile = async (req, res) => {
     if (!user) return res.status(404).json({ message: 'User not found.' });
     return res.json({ user: User.sanitize(user) });
   } catch (err) {
-    console.error('[Hershild] getProfile error:', err);
+    console.error('[HERSHIELD] getProfile error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };
@@ -29,7 +29,7 @@ exports.updateProfile = async (req, res) => {
     if (!user) return res.status(404).json({ message: 'User not found.' });
     return res.json({ message: 'Profile updated.', user: User.sanitize(user) });
   } catch (err) {
-    console.error('[Hershild] updateProfile error:', err);
+    console.error('[HERSHIELD] updateProfile error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };
@@ -43,7 +43,7 @@ exports.deleteAccount = async (req, res) => {
     res.clearCookie('refreshToken', { path: '/api/auth' });
     return res.json({ message: 'Account deleted.' });
   } catch (err) {
-    console.error('[Hershild] deleteAccount error:', err);
+    console.error('[HERSHIELD] deleteAccount error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };
@@ -59,7 +59,7 @@ exports.getAllUsers = async (req, res) => {
     const users = User.find();
     return res.json({ users: users.map(User.sanitize) });
   } catch (err) {
-    console.error('[Hershild] getAllUsers error:', err);
+    console.error('[HERSHIELD] getAllUsers error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };

@@ -18,7 +18,7 @@ const Navbar = () => {
   return (
     <nav className="nav-bar" style={{ background: 'linear-gradient(135deg, #ad1457 0%, #7b1fa2 50%, #6a1b9a 100%)', boxShadow: '0 2px 12px rgba(173,20,87,0.3)' }}>
       <Link to="/" className="nav-brand">
-        🌸 Hershild
+        🌸 HERSHIELD
       </Link>
 
       <button className="hamburger" onClick={() => setMenuOpen(!menuOpen)} aria-label="Menu">

@@ -16,14 +16,14 @@
 const { v4: uuidv4 } = require('uuid');
 
 // Default merchant UPI VPA — set your own in .env
-const MERCHANT_VPA = process.env.UPI_VPA || 'hershild@upi';
-const MERCHANT_NAME = process.env.UPI_MERCHANT_NAME || 'HerShild';
+const MERCHANT_VPA = process.env.UPI_VPA || 'HERSHIELD@upi';
+const MERCHANT_NAME = process.env.UPI_MERCHANT_NAME || 'HERSHIELD';
 
 /**
  * Generate a standard UPI payment link.
  */
 const generateUPILink = ({ amount, note, currency = 'INR', txnRef = null }) => {
-  const ref = txnRef || `HERSHILD-${uuidv4().slice(0, 8).toUpperCase()}`;
+  const ref = txnRef || `HERSHIELD-${uuidv4().slice(0, 8).toUpperCase()}`;
   const params = new URLSearchParams({
     pa: MERCHANT_VPA,
     pn: MERCHANT_NAME,

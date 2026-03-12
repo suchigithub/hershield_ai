@@ -21,7 +21,7 @@ const Home = () => {
   <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: 'calc(100vh - 60px)', background: 'linear-gradient(180deg, #fce4ec 0%, #f3e5f5 50%, #ede7f6 100%)', padding: '1.5rem' }}>
     <div style={{ textAlign: 'center', maxWidth: '600px', width: '100%' }}>
       <div style={{ fontSize: '1rem', color: '#ad1457', fontWeight: 600, marginBottom: '0.5rem', letterSpacing: '0.1em', textTransform: 'uppercase' }}>🎀 Happy Women's Day 2026</div>
-      <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', color: '#7b1fa2', marginBottom: '0.5rem' }}>🌸 Hershild</h1>
+      <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', color: '#7b1fa2', marginBottom: '0.5rem' }}>🌸 HERSHIELD</h1>
       <p style={{ fontSize: '1rem', color: '#ad1457', fontWeight: 500, marginBottom: '0.75rem' }}>Empowering Women, Protecting Dreams</p>
       <p style={{ fontSize: 'clamp(0.9rem, 2.5vw, 1.05rem)', color: '#555', marginBottom: '2rem', lineHeight: 1.6 }}>
         A comprehensive platform for women's safety, health, finance, education, career, and rights — because every woman deserves to thrive.

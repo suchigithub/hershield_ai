@@ -38,7 +38,7 @@ app.use(cookieParser());
 
 // ── Health check ──
 app.get('/api/health', (_req, res) =>
-  res.json({ status: 'ok', app: 'Hershild API', timestamp: new Date().toISOString() })
+  res.json({ status: 'ok', app: 'HERSHIELD API', timestamp: new Date().toISOString() })
 );
 
 // ── API routes ──
@@ -65,7 +65,7 @@ app.get('*', (_req, res) => {
 
 // ── Global error handler ──
 app.use((err, _req, res, _next) => {
-  console.error('[Hershild] Unhandled error:', err);
+  console.error('[HERSHIELD] Unhandled error:', err);
   res.status(500).json({ message: 'Internal server error.' });
 });
 
@@ -74,7 +74,7 @@ const PORT = process.env.PORT || 5000;
 
 connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log(`[Hershild] Server running on port ${PORT}`);
+    console.log(`[HERSHIELD] Server running on port ${PORT}`);
   });
 });
 

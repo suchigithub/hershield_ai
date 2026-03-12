@@ -1,7 +1,7 @@
 {
-  "name": "hershild-backend",
+  "name": "HERSHIELD-backend",
   "version": "1.0.0",
-  "description": "Hershild API - Secure authentication backend",
+  "description": "HERSHIELD API - Secure authentication backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

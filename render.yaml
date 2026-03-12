@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: hershild
+    name: HERSHIELD
     runtime: node
     region: singapore
     plan: free

@@ -30,7 +30,7 @@ const Register = () => {
   return (
     <div style={styles.wrapper}>
       <form onSubmit={handleSubmit} style={styles.card}>
-        <h2 style={styles.title}>Join Hershild 🌸</h2>
+        <h2 style={styles.title}>Join HERSHIELD 🌸</h2>
 
         {error && <div style={styles.error}>{error}</div>}
 

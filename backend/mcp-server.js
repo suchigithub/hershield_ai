@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 /**
- * Hershild MCP Server
+ * HERSHIELD MCP Server
  *
- * Exposes Hershild app tools via Model Context Protocol so AI assistants
+ * Exposes HERSHIELD app tools via Model Context Protocol so AI assistants
  * (Copilot, Claude, etc.) can interact with safety, health, finance,
  * education, career, rights, and wellness features.
  */
@@ -23,9 +23,9 @@ const { generateUPILink, getFinanceTips } = require('./services/upiService');
 
 // ── Create MCP Server ─────────────────────────
 const server = new McpServer({
-  name: 'hershild',
+  name: 'HERSHIELD',
   version: '1.0.0',
-  description: 'Hershild — Women Empowerment Platform. Safety, Health, Finance, Education, Career, Rights & Wellness tools.',
+  description: 'HERSHIELD — Women Empowerment Platform. Safety, Health, Finance, Education, Career, Rights & Wellness tools.',
 });
 
 // ════════════════════════════════════════════════
@@ -307,7 +307,7 @@ server.tool(
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);
-  console.error('[Hershild MCP] Server started');
+  console.error('[HERSHIELD MCP] Server started');
 }
 
 main().catch(console.error);

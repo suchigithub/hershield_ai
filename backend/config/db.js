@@ -35,7 +35,7 @@ db.defaults({
 }).write();
 
 const connectDB = async () => {
-  console.log(`[Hershild] JSON file DB ready at ${DB_PATH}`);
+  console.log(`[HERSHIELD] JSON file DB ready at ${DB_PATH}`);
 };
 
 module.exports = { db, connectDB };

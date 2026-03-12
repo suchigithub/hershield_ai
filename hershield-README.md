@@ -1,4 +1,4 @@
-# 🛡️ Hershild — Full‑Stack Authentication App
+# 🛡️ HERSHIELD — Full‑Stack Authentication App
 
 A secure, full‑stack authentication platform built with **React**, **Node.js**, **Express**, and **MongoDB**.
 
@@ -21,7 +21,7 @@ A secure, full‑stack authentication platform built with **React**, **Node.js**
 ## Folder Structure
 
 ```
-hershild/
+HERSHIELD/
 ├── backend/
 │   ├── config/
 │   │   └── db.js              # MongoDB connection
@@ -105,7 +105,7 @@ npm install
 |----------|---------|-------------|
 | `PORT` | `5000` | Server port |
 | `NODE_ENV` | `development` | Environment |
-| `MONGO_URI` | `mongodb://127.0.0.1:27017/hershild` | MongoDB connection string |
+| `MONGO_URI` | `mongodb://127.0.0.1:27017/HERSHIELD` | MongoDB connection string |
 | `ACCESS_TOKEN_SECRET` | *(change me)* | Secret for signing access JWTs |
 | `REFRESH_TOKEN_SECRET` | *(change me)* | Secret for signing refresh JWTs |
 | `ACCESS_TOKEN_EXPIRY` | `15m` | Access token lifetime |
@@ -183,8 +183,8 @@ In development mode, OTPs are printed to the **backend console**:
 
 ```
 ──────────────────────────────────────
-[Hershild OTP] Sending OTP to user@example.com
-[Hershild OTP] Code: 482917
+[HERSHIELD OTP] Sending OTP to user@example.com
+[HERSHIELD OTP] Code: 482917
 ──────────────────────────────────────
 ```
 
@@ -201,4 +201,4 @@ Replace `services/otpService.js` with a real provider (SendGrid, Twilio, AWS SES
 
 ---
 
-*Built with ❤️ — Hershild*
+*Built with ❤️ — HERSHIELD*

@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children }) => {
   if (loading) {
     return (
       <div style={styles.loader}>
-        <p>Loading Hershild...</p>
+        <p>Loading HERSHIELD...</p>
       </div>
     );
   }

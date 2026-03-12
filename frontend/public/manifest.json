@@ -1,6 +1,6 @@
 {
-  "name": "Hershild — Women Empowerment",
-  "short_name": "Hershild",
+  "name": "HERSHIELD — Women Empowerment",
+  "short_name": "HERSHIELD",
   "description": "Empowering women with safety, health, finance, education, career & rights tools. Happy Women's Day!",
   "start_url": "/",
   "display": "standalone",
@@ -53,7 +53,7 @@
     {
       "name": "Dashboard",
       "url": "/dashboard",
-      "description": "Go to Hershild Dashboard"
+      "description": "Go to HERSHIELD Dashboard"
     },
     {
       "name": "SOS Safety",

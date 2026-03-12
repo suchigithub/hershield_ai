@@ -22,7 +22,7 @@ const Dashboard = () => {
         {/* Greeting banner */}
         <div className="hero-section" style={{ background: 'linear-gradient(135deg, #ec407a 0%, #ab47bc 50%, #7b1fa2 100%)', color: '#fff', marginBottom: '1.5rem', boxShadow: '0 4px 20px rgba(236,64,122,0.3)' }}>
           <div style={{ fontSize: '0.85rem', opacity: 0.9, marginBottom: '0.3rem' }}>🎀 Happy Women's Day 2026</div>
-          <h2 style={{ marginBottom: '0.25rem', color: '#fff', fontSize: '1.5rem' }}>🌸 Hershild Dashboard</h2>
+          <h2 style={{ marginBottom: '0.25rem', color: '#fff', fontSize: '1.5rem' }}>🌸 HERSHIELD Dashboard</h2>
           <p style={{ color: 'rgba(255,255,255,0.9)', fontSize: '1.05rem', margin: 0 }}>
             Welcome, <strong>{user?.name}</strong>!
           </p>

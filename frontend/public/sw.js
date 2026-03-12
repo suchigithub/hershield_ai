@@ -1,5 +1,5 @@
-// Service Worker for Hershild PWA
-const CACHE_NAME = 'hershild-v1';
+// Service Worker for HERSHIELD PWA
+const CACHE_NAME = 'HERSHIELD-v1';
 const OFFLINE_URL = '/';
 
 // Files to cache on install

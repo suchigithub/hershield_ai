@@ -58,7 +58,7 @@ exports.register = async (req, res) => {
 
     return res.status(201).json(response);
   } catch (err) {
-    console.error('[Hershild] register error:', err);
+    console.error('[HERSHIELD] register error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };
@@ -91,7 +91,7 @@ exports.verifyOTP = async (req, res) => {
 
     return res.json({ message: 'Email verified successfully. You can now log in.' });
   } catch (err) {
-    console.error('[Hershild] verifyOTP error:', err);
+    console.error('[HERSHIELD] verifyOTP error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };
@@ -121,7 +121,7 @@ exports.resendOTP = async (req, res) => {
     response.devOtp = otpCode;
     return res.json(response);
   } catch (err) {
-    console.error('[Hershild] resendOTP error:', err);
+    console.error('[HERSHIELD] resendOTP error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };
@@ -156,7 +156,7 @@ exports.login = async (req, res) => {
       user: User.sanitize(user),
     });
   } catch (err) {
-    console.error('[Hershild] login error:', err);
+    console.error('[HERSHIELD] login error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };
@@ -200,7 +200,7 @@ exports.refreshToken = async (req, res) => {
 
     return res.json({ accessToken: newAccessToken });
   } catch (err) {
-    console.error('[Hershild] refreshToken error:', err);
+    console.error('[HERSHIELD] refreshToken error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };
@@ -217,7 +217,7 @@ exports.logout = async (req, res) => {
     res.clearCookie('refreshToken', { path: '/api/auth' });
     return res.json({ message: 'Logged out successfully.' });
   } catch (err) {
-    console.error('[Hershild] logout error:', err);
+    console.error('[HERSHIELD] logout error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };
@@ -231,7 +231,7 @@ exports.logoutAll = async (req, res) => {
     res.clearCookie('refreshToken', { path: '/api/auth' });
     return res.json({ message: 'All sessions revoked.' });
   } catch (err) {
-    console.error('[Hershild] logoutAll error:', err);
+    console.error('[HERSHIELD] logoutAll error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };

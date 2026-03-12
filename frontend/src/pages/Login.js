@@ -35,7 +35,7 @@ const Login = () => {
   return (
     <div style={styles.wrapper}>
       <form onSubmit={handleSubmit} style={styles.card}>
-        <h2 style={styles.title}>Welcome back to Hershild 🌸</h2>
+        <h2 style={styles.title}>Welcome back to HERSHIELD 🌸</h2>
 
         {error && <div style={styles.error}>{error}</div>}
 

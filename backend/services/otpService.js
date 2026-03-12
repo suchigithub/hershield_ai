@@ -1,5 +1,5 @@
 /**
- * Mock OTP service for Hershild.
+ * Mock OTP service for HERSHIELD.
  * In production, replace with Twilio / SendGrid / AWS SES.
  */
 
@@ -15,8 +15,8 @@ const generateOTP = () => {
 const sendOTP = async ({ email, phone, code }) => {
   // ── Mock implementation ──
   console.log('──────────────────────────────────────');
-  console.log(`[Hershild OTP] Sending OTP to ${email || phone}`);
-  console.log(`[Hershild OTP] Code: ${code}`);
+  console.log(`[HERSHIELD OTP] Sending OTP to ${email || phone}`);
+  console.log(`[HERSHIELD OTP] Code: ${code}`);
   console.log('──────────────────────────────────────');
 
   // In production, integrate an email/SMS provider here.
