@@ -7,7 +7,7 @@ const MOOD_EMOJIS = {
   grateful: '🙏', tired: '😴', hopeful: '🌟', overwhelmed: '😩', neutral: '😐',
 };
 
-const TABS = ['home', 'journal', 'meditate', 'therapists', 'groups'];
+const TABS = ['home', 'journal', 'meditate', 'videos', 'notifications', 'therapists', 'groups'];
 
 const HerShanti = () => {
   const navigate = useNavigate();
@@ -37,6 +37,14 @@ const HerShanti = () => {
   const [groupMsgs, setGroupMsgs] = useState([]);
   const [newMsg, setNewMsg] = useState('');
   const [groupForm, setGroupForm] = useState({ name: '', description: '', category: '' });
+
+  // ── Videos ──
+  const [videos, setVideos] = useState([]);
+  const [videoCategories, setVideoCategories] = useState([]);
+  const [videoCat, setVideoCat] = useState('all');
+
+  // ── Notifications ──
+  const [notifications, setNotifications] = useState([]);
 
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
@@ -68,6 +76,17 @@ const HerShanti = () => {
   const loadGroups = useCallback(async () => {
     try { const { data } = await hershantiService.getGroups(); setGroups(data.groups); } catch {}
   }, []);
+  const loadVideos = useCallback(async () => {
+    try {
+      const cat = videoCat === 'all' ? undefined : videoCat;
+      const { data } = await hershantiService.getVideos(cat);
+      setVideos(data.videos);
+      if (data.categories) setVideoCategories(data.categories);
+    } catch {}
+  }, [videoCat]);
+  const loadNotifications = useCallback(async () => {
+    try { const { data } = await hershantiService.getNotifications(); setNotifications(data.notifications); } catch {}
+  }, []);
 
   useEffect(() => {
     if (tab === 'home') loadDaily();
@@ -75,7 +94,11 @@ const HerShanti = () => {
     if (tab === 'meditate') loadSessions();
     if (tab === 'therapists') loadTherapists();
     if (tab === 'groups') loadGroups();
-  }, [tab, loadDaily, loadEntries, loadSessions, loadTherapists, loadGroups]);
+    if (tab === 'videos') loadVideos();
+    if (tab === 'notifications') loadNotifications();
+  }, [tab, loadDaily, loadEntries, loadSessions, loadTherapists, loadGroups, loadVideos, loadNotifications]);
+
+  useEffect(() => { if (tab === 'videos') loadVideos(); }, [videoCat, loadVideos, tab]);
 
   // ── Handlers ──
   const handleLogMood = async (e) => {
@@ -143,6 +166,7 @@ const HerShanti = () => {
           <button key={t} onClick={() => { setTab(t); setActiveMed(null); setActiveGroup(null); setMoodResponse(null); }}
             style={{ ...s.tab, ...(tab === t ? s.tabActive : {}) }}>
             {t === 'home' ? '🏠 Home' : t === 'journal' ? '📝 Journal' : t === 'meditate' ? '🧘 Meditate' :
+             t === 'videos' ? '🎥 Videos' : t === 'notifications' ? '🔔 AI Tips' :
              t === 'therapists' ? '👩‍⚕️ Therapists' : '🤝 Groups'}
           </button>
         ))}
@@ -320,6 +344,106 @@ const HerShanti = () => {
         </div>
       )}
 
+      {/* ── VIDEOS TAB ── */}
+      {tab === 'videos' && (
+        <div>
+          <div style={{ ...s.card, background: 'linear-gradient(135deg, #fce4ec 0%, #f3e5f5 100%)', textAlign: 'center' }}>
+            <div style={{ fontSize: '2rem' }}>🎥</div>
+            <h3 style={{ color: '#6a1b9a', margin: '0.25rem 0' }}>Motivational Videos</h3>
+            <p style={{ color: '#666', fontSize: '0.9rem' }}>Curated YouTube talks and guided sessions to inspire, calm, and empower you.</p>
+          </div>
+
+          <div style={{ display: 'flex', gap: '0.25rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
+            {videoCategories.map((c) => (
+              <button key={c} onClick={() => setVideoCat(c)}
+                style={{ ...s.filterBtn, ...(videoCat === c ? { background: '#6a1b9a', color: '#fff' } : {}) }}>
+                {c === 'all' ? '🌟 All' : c === 'self-love' ? '💗 Self-Love' : c === 'stress' ? '😤 Stress' :
+                 c === 'happiness' ? '😊 Happiness' : c === 'meditation' ? '🧘 Meditation' :
+                 c === 'confidence' ? '💪 Confidence' : c === 'self-care' ? '🛁 Self-Care' :
+                 c === 'anxiety' ? '😰 Anxiety' : c === 'growth' ? '🌱 Growth' :
+                 c === 'yoga' ? '🧘‍♀️ Yoga' : c === 'gratitude' ? '🙏 Gratitude' :
+                 c === 'sleep' ? '😴 Sleep' : c === 'anger' ? '🔥 Anger' : `#${c}`}
+              </button>
+            ))}
+          </div>
+
+          {videos.map((v) => (
+            <div key={v.id} style={s.card}>
+              <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0, borderRadius: '10px', overflow: 'hidden', marginBottom: '0.75rem', background: '#000' }}>
+                <iframe
+                  src={`https://www.youtube.com/embed/${v.youtubeId}`}
+                  title={v.title}
+                  style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 'none' }}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+              <h4 style={{ color: '#6a1b9a', margin: '0 0 0.25rem' }}>{v.title}</h4>
+              <div style={{ fontSize: '0.85rem', color: '#888', marginBottom: '0.3rem' }}>
+                🎙️ {v.speaker} · ⏱ {v.duration}
+              </div>
+              <p style={{ color: '#555', fontSize: '0.9rem', lineHeight: 1.5, margin: '0 0 0.5rem' }}>{v.description}</p>
+              <div style={{ display: 'flex', gap: '0.3rem', flexWrap: 'wrap' }}>
+                <span style={{ ...s.badge, background: '#ede7f6' }}>#{v.category}</span>
+                <a href={`https://www.youtube.com/watch?v=${v.youtubeId}`} target="_blank" rel="noopener noreferrer"
+                  style={{ ...s.badge, background: '#ffebee', color: '#c62828', textDecoration: 'none' }}>▶️ Watch on YouTube</a>
+              </div>
+            </div>
+          ))}
+          {videos.length === 0 && <p style={s.empty}>No videos found in this category.</p>}
+        </div>
+      )}
+
+      {/* ── NOTIFICATIONS TAB ── */}
+      {tab === 'notifications' && (
+        <div>
+          <div style={{ ...s.card, background: 'linear-gradient(135deg, #e8f5e9 0%, #f3e5f5 100%)', textAlign: 'center' }}>
+            <div style={{ fontSize: '2rem' }}>🔔</div>
+            <h3 style={{ color: '#6a1b9a', margin: '0.25rem 0' }}>AI Wellness Notifications</h3>
+            <p style={{ color: '#666', fontSize: '0.9rem' }}>Smart, personalized tips based on time of day and your mood patterns.</p>
+          </div>
+
+          <button onClick={loadNotifications} style={{ ...s.btn, marginBottom: '1rem', width: '100%' }}>
+            🔄 Refresh Notifications
+          </button>
+
+          {notifications.map((n, i) => (
+            <div key={i} style={{ ...s.card, borderLeft: `4px solid ${n.type === 'mood-based' ? '#e91e63' : n.type === 'time-based' ? '#1565c0' : n.type === 'video-suggestion' ? '#c62828' : '#6a1b9a'}` }}>
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
+                <span style={{ fontSize: '1.8rem' }}>{n.icon}</span>
+                <div style={{ flex: 1 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap' }}>
+                    <h4 style={{ color: '#6a1b9a', margin: '0 0 0.2rem' }}>{n.title}</h4>
+                    <span style={{ ...s.badge,
+                      background: n.type === 'mood-based' ? '#fce4ec' : n.type === 'time-based' ? '#e3f2fd' : n.type === 'video-suggestion' ? '#fff3e0' : '#f3e5f5',
+                      color: n.type === 'mood-based' ? '#c62828' : n.type === 'time-based' ? '#1565c0' : n.type === 'video-suggestion' ? '#e65100' : '#6a1b9a',
+                    }}>
+                      {n.type === 'mood-based' ? `🎯 Based on: ${n.mood}` : n.type === 'time-based' ? `🕐 ${n.timeOfDay}` : n.type === 'video-suggestion' ? '🎥 Video Pick' : '🌟 Daily'}
+                    </span>
+                  </div>
+                  <p style={{ color: '#555', lineHeight: 1.6, margin: '0.3rem 0', fontSize: '0.9rem' }}>{n.message}</p>
+                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginTop: '0.3rem' }}>
+                    {n.action === 'meditate' && (
+                      <button onClick={() => { setTab('meditate'); }} style={{ ...s.btn, padding: '0.3rem 0.75rem', fontSize: '0.8rem' }}>🧘 Go to Meditation</button>
+                    )}
+                    {n.action === 'journal' && (
+                      <button onClick={() => setTab('journal')} style={{ ...s.btn, padding: '0.3rem 0.75rem', fontSize: '0.8rem' }}>📝 Open Journal</button>
+                    )}
+                    {n.action === 'video' && n.link && (
+                      <button onClick={() => { setTab('videos'); }} style={{ ...s.btn, padding: '0.3rem 0.75rem', fontSize: '0.8rem', background: '#c62828' }}>🎥 Watch Video</button>
+                    )}
+                    {n.action === 'therapist' && (
+                      <button onClick={() => setTab('therapists')} style={{ ...s.btn, padding: '0.3rem 0.75rem', fontSize: '0.8rem', background: '#2e7d32' }}>👩‍⚕️ Find Therapist</button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+          {notifications.length === 0 && <p style={s.empty}>No notifications right now. Check back later! 💜</p>}
+        </div>
+      )}
+
       {/* ── THERAPISTS TAB ── */}
       {tab === 'therapists' && (
         <div>
@@ -429,6 +553,7 @@ const s = {
   input: { padding: '0.6rem 0.75rem', border: '1px solid #e1bee7', borderRadius: '8px', fontSize: '0.95rem', outline: 'none' },
   btn: { padding: '0.6rem 1rem', background: '#6a1b9a', color: '#fff', border: 'none', borderRadius: '8px', fontSize: '0.9rem', fontWeight: 600, cursor: 'pointer' },
   moodBtn: { padding: '0.5rem 0.75rem', border: '1px solid #e1bee7', borderRadius: '20px', background: '#fff', cursor: 'pointer', fontSize: '0.82rem', textTransform: 'capitalize' },
+  filterBtn: { padding: '0.4rem 0.75rem', border: '1px solid #e1bee7', borderRadius: '20px', background: '#fff', cursor: 'pointer', fontSize: '0.8rem' },
   badge: { display: 'inline-block', padding: '0.2rem 0.6rem', borderRadius: '12px', background: '#f3e5f5', color: '#6a1b9a', fontSize: '0.75rem', fontWeight: 500 },
   progressBg: { background: '#e1bee7', height: '6px', borderRadius: '3px', margin: '0.75rem 0', overflow: 'hidden' },
   progressFill: { height: '100%', background: '#6a1b9a', borderRadius: '3px', transition: 'width 0.3s' },

@@ -37,6 +37,14 @@ const herswasthyaService = {
 
   // ── Coaches ──
   getCoaches: (params) => api.get('/herswasthya/coaches', { params }),
+
+  // ── Smartwatch ──
+  getSupportedBrands: () => api.get('/herswasthya/smartwatch/brands'),
+  getLinkedDevices: () => api.get('/herswasthya/smartwatch/devices'),
+  linkSmartwatch: (data) => api.post('/herswasthya/smartwatch/link', data),
+  unlinkSmartwatch: (id) => api.delete(`/herswasthya/smartwatch/devices/${id}`),
+  syncVitals: (data) => api.post('/herswasthya/smartwatch/sync', data),
+  getVitals: (params) => api.get('/herswasthya/smartwatch/vitals', { params }),
 };
 
 export default herswasthyaService;

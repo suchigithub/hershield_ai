@@ -223,12 +223,136 @@ const getTherapists = (filters = {}) => {
   return list;
 };
 
+// ── Motivational YouTube Videos ──────────────────
+const YOUTUBE_VIDEOS = [
+  { id: 'yt-1', title: 'The Power of Vulnerability', speaker: 'Brené Brown', category: 'self-love', duration: '20 min', youtubeId: 'iCvmsMzlF7o', description: 'A TED Talk on how embracing vulnerability leads to genuine connection, courage, and compassion.' },
+  { id: 'yt-2', title: 'How to Make Stress Your Friend', speaker: 'Kelly McGonigal', category: 'stress', duration: '15 min', youtubeId: 'RcGyVTAoXEU', description: 'Reframe how you think about stress — it can actually make you healthier and more socially connected.' },
+  { id: 'yt-3', title: 'The Happy Secret to Better Work', speaker: 'Shawn Achor', category: 'happiness', duration: '12 min', youtubeId: 'fLJsdqxnZb0', description: 'Positive psychology insights on why happiness fuels success, not the other way around.' },
+  { id: 'yt-4', title: 'All It Takes Is 10 Mindful Minutes', speaker: 'Andy Puddicombe', category: 'meditation', duration: '10 min', youtubeId: 'qzR62JJCMBQ', description: 'A simple case for mindfulness meditation — refreshing your mind 10 minutes a day.' },
+  { id: 'yt-5', title: 'Your Body Language May Shape Who You Are', speaker: 'Amy Cuddy', category: 'confidence', duration: '21 min', youtubeId: 'Ks-_Mh1QhMc', description: 'Power poses can change how you feel about yourself — body language affects our brain chemistry.' },
+  { id: 'yt-6', title: 'The Skill of Self-Confidence', speaker: 'Dr. Ivan Joseph', category: 'confidence', duration: '13 min', youtubeId: 'w-HYZv6HzAs', description: 'Practical strategies for building self-confidence through repetition and positive self-talk.' },
+  { id: 'yt-7', title: 'How to Practice Emotional First Aid', speaker: 'Guy Winch', category: 'self-care', duration: '17 min', youtubeId: 'F2hc2FLOdhI', description: 'We brush our teeth daily but what do we do for our emotional hygiene? A must-watch on self-care.' },
+  { id: 'yt-8', title: 'Healing Meditation for Inner Peace', speaker: 'Goodful', category: 'meditation', duration: '10 min', youtubeId: 'z6X5oEIg6Ak', description: 'A calming guided meditation for stress relief and inner peace. Perfect for beginners.' },
+  { id: 'yt-9', title: 'Overcoming Anxiety', speaker: 'Olivia Remes', category: 'anxiety', duration: '15 min', youtubeId: 'WWloIAQpMcQ', description: 'Practical tips to overcome anxiety from a University of Cambridge researcher.' },
+  { id: 'yt-10', title: 'The Power of Believing You Can Improve', speaker: 'Carol Dweck', category: 'growth', duration: '10 min', youtubeId: '_X0mgOOSpLU', description: 'The growth mindset — the belief that you can improve — is the key to achievement.' },
+  { id: 'yt-11', title: 'Yoga for Anxiety and Stress', speaker: 'Yoga With Adriene', category: 'yoga', duration: '28 min', youtubeId: 'hJbRpHZr_d0', description: 'A gentle yoga session designed specifically to calm the nervous system and relieve stress.' },
+  { id: 'yt-12', title: 'Why We All Need to Practice Emotional First Aid', speaker: 'Guy Winch', category: 'self-care', duration: '8 min', youtubeId: 'sGlSi16WNFU', description: 'Short and powerful talk on why emotional health deserves the same attention as physical health.' },
+  { id: 'yt-13', title: 'How Gratitude Rewires Your Brain', speaker: 'Christina Costa', category: 'gratitude', duration: '12 min', youtubeId: 'NGRG0fEBp8I', description: 'Neuroscience-backed explanation of how a gratitude practice literally rewires your brain for happiness.' },
+  { id: 'yt-14', title: 'Sleep Meditation — Guided Calm', speaker: 'Jason Stephenson', category: 'sleep', duration: '45 min', youtubeId: 'rvaqPPjGGDo', description: 'A deeply relaxing guided sleep meditation for insomnia, anxiety, and restful sleep.' },
+  { id: 'yt-15', title: 'Letting Go of Anger', speaker: 'The School of Life', category: 'anger', duration: '6 min', youtubeId: 'x4v0sRJT6P8', description: 'Understanding anger and learning healthy ways to process and release it.' },
+];
+
+const VIDEO_CATEGORIES = ['all', 'self-love', 'stress', 'happiness', 'meditation', 'confidence', 'self-care', 'anxiety', 'growth', 'yoga', 'gratitude', 'sleep', 'anger'];
+
+const getYouTubeVideos = (category = null) => {
+  if (category && category !== 'all') return YOUTUBE_VIDEOS.filter((v) => v.category === category);
+  return YOUTUBE_VIDEOS;
+};
+
+const getVideoById = (id) => {
+  return YOUTUBE_VIDEOS.find((v) => v.id === id) || null;
+};
+
+// ── AI Wellness Notifications ──────────────────
+const AI_NOTIFICATIONS = {
+  morning: [
+    { icon: '🌅', title: 'Good Morning!', message: 'Start your day with a 5-minute breathing exercise. Your mind will thank you.', action: 'meditate', link: 'med-1' },
+    { icon: '🌸', title: 'New Day, New Strength', message: 'You survived 100% of your worst days. You are stronger than you think.', action: 'affirmation' },
+    { icon: '📝', title: 'Morning Check-in', message: 'How are you feeling today? Take a moment to log your mood.', action: 'journal' },
+    { icon: '🎥', title: 'Morning Motivation', message: 'Watch a short motivational video to set the tone for your day.', action: 'video', link: 'yt-3' },
+  ],
+  afternoon: [
+    { icon: '☀️', title: 'Midday Reset', message: 'Feeling overwhelmed? Try the 5-4-3-2-1 grounding technique.', action: 'meditate', link: 'med-6' },
+    { icon: '💪', title: 'You\'re Doing Great', message: 'Halfway through the day! Remember to hydrate and take a stretch break.', action: 'affirmation' },
+    { icon: '🎥', title: 'Quick Inspiration', message: 'Take 10 minutes to watch something uplifting. You deserve a mental break.', action: 'video', link: 'yt-4' },
+    { icon: '🧘', title: 'Stress Check', message: 'If stress is building up, try our Stress Relief meditation.', action: 'meditate', link: 'med-2' },
+  ],
+  evening: [
+    { icon: '🌙', title: 'Evening Wind-Down', message: 'It is time to let go of the day. Try a gratitude meditation before bed.', action: 'meditate', link: 'med-3' },
+    { icon: '📝', title: 'Evening Reflection', message: 'Before bed, journal about three good things that happened today.', action: 'journal' },
+    { icon: '😴', title: 'Better Sleep Tonight', message: 'Trouble sleeping? Our Sleep Wind-Down meditation can help.', action: 'meditate', link: 'med-4' },
+    { icon: '🎥', title: 'Calm Before Sleep', message: 'Watch a calming guided meditation video to help you relax.', action: 'video', link: 'yt-14' },
+  ],
+  mood_based: {
+    anxious: [
+      { icon: '🫂', title: 'Anxiety Support', message: 'We noticed you have been feeling anxious. You are not alone. Try our Anxiety Anchor meditation.', action: 'meditate', link: 'med-6' },
+      { icon: '🎥', title: 'Watch: Overcoming Anxiety', message: 'This practical video by Olivia Remes has helped millions with anxiety.', action: 'video', link: 'yt-9' },
+    ],
+    sad: [
+      { icon: '💜', title: 'We See You', message: 'Sadness is a valid feeling. Be gentle with yourself. Would you like to talk to a therapist?', action: 'therapist' },
+      { icon: '🎥', title: 'Emotional First Aid', message: 'This video will remind you of the importance of caring for your emotional well-being.', action: 'video', link: 'yt-7' },
+    ],
+    stressed: [
+      { icon: '🧘', title: 'Stress Relief Available', message: 'Your recent entries show stress building up. Try our Stress Relief session.', action: 'meditate', link: 'med-2' },
+      { icon: '🎥', title: 'Make Stress Your Friend', message: 'Kelly McGonigal explains how to reframe stress into something positive.', action: 'video', link: 'yt-2' },
+    ],
+    tired: [
+      { icon: '😴', title: 'Rest Is Productive', message: 'Your body is telling you something. Give yourself permission to rest today.', action: 'meditate', link: 'med-4' },
+      { icon: '🎥', title: 'Sleep Meditation', message: 'This guided sleep meditation has helped thousands find restful sleep.', action: 'video', link: 'yt-14' },
+    ],
+    happy: [
+      { icon: '🎉', title: 'Celebrate Your Joy!', message: 'You have been feeling great! Keep going. Consider sharing your positivity.', action: 'affirmation' },
+      { icon: '🎥', title: 'Gratitude Boost', message: 'Learn how gratitude can make happiness last even longer.', action: 'video', link: 'yt-13' },
+    ],
+    angry: [
+      { icon: '🌊', title: 'Breathe Through It', message: 'Anger is energy. Channel it. Try a self-compassion meditation.', action: 'meditate', link: 'med-5' },
+      { icon: '🎥', title: 'Letting Go of Anger', message: 'A thoughtful and practical video on understanding and releasing anger.', action: 'video', link: 'yt-15' },
+    ],
+  },
+};
+
+const getAINotifications = (userId, moodData = {}) => {
+  const hour = new Date().getHours();
+  let timeOfDay = 'morning';
+  if (hour >= 12 && hour < 17) timeOfDay = 'afternoon';
+  else if (hour >= 17) timeOfDay = 'evening';
+
+  const notifications = [];
+
+  // Time-based notification
+  const timeNotifs = AI_NOTIFICATIONS[timeOfDay];
+  notifications.push({ ...timeNotifs[Math.floor(Math.random() * timeNotifs.length)], type: 'time-based', timeOfDay });
+
+  // Mood-based notification if recent mood available
+  if (moodData.dominantMood && AI_NOTIFICATIONS.mood_based[moodData.dominantMood]) {
+    const moodNotifs = AI_NOTIFICATIONS.mood_based[moodData.dominantMood];
+    notifications.push({ ...moodNotifs[Math.floor(Math.random() * moodNotifs.length)], type: 'mood-based', mood: moodData.dominantMood });
+  }
+
+  // Daily affirmation notification
+  notifications.push({
+    icon: '🌟',
+    title: 'Daily Affirmation',
+    message: getRandomAffirmation(),
+    type: 'affirmation',
+    action: 'affirmation',
+  });
+
+  // Video recommendation
+  const randomVideo = YOUTUBE_VIDEOS[Math.floor(Math.random() * YOUTUBE_VIDEOS.length)];
+  notifications.push({
+    icon: '🎥',
+    title: `Watch: ${randomVideo.title}`,
+    message: `${randomVideo.description} (${randomVideo.duration})`,
+    type: 'video-suggestion',
+    action: 'video',
+    link: randomVideo.id,
+    videoId: randomVideo.youtubeId,
+  });
+
+  return notifications;
+};
+
 module.exports = {
   getMeditations,
   getMeditationById,
   getTherapists,
   getReflectionPrompt,
   getRandomAffirmation,
+  getYouTubeVideos,
+  getVideoById,
+  getAINotifications,
+  VIDEO_CATEGORIES,
   REFLECTION_PROMPTS,
   AFFIRMATIONS,
 };

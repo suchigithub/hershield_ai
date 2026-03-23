@@ -89,4 +89,38 @@ router.post(
 // ── Nearby Coaches ────────────────────────────
 router.get('/coaches', c.getCoaches);
 
+// ── Smartwatch ────────────────────────────────
+router.get('/smartwatch/brands', c.getSupportedBrands);
+router.get('/smartwatch/devices', c.getLinkedDevices);
+
+router.post(
+  '/smartwatch/link',
+  [
+    body('brand').trim().notEmpty().withMessage('Brand is required.'),
+    body('model').trim().notEmpty().withMessage('Model is required.'),
+    body('deviceName').optional().trim(),
+  ],
+  validate,
+  c.linkSmartwatch
+);
+
+router.delete('/smartwatch/devices/:id', c.unlinkSmartwatch);
+
+router.post(
+  '/smartwatch/sync',
+  [
+    body('deviceId').trim().notEmpty().withMessage('Device ID is required.'),
+    body('heartRate').optional().isFloat({ min: 30, max: 250 }),
+    body('spo2').optional().isFloat({ min: 50, max: 100 }),
+    body('steps').optional().isInt({ min: 0 }),
+    body('calories').optional().isFloat({ min: 0 }),
+    body('stress').optional().isFloat({ min: 0, max: 100 }),
+    body('temperature').optional().isFloat({ min: 30, max: 45 }),
+  ],
+  validate,
+  c.syncVitals
+);
+
+router.get('/smartwatch/vitals', c.getVitals);
+
 module.exports = router;

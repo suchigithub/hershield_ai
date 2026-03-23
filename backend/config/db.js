@@ -32,6 +32,8 @@ db.defaults({
   resumes: [],
   mentorConnections: [],
   communityPosts: [],
+  smartwatchDevices: [],
+  smartwatchVitals: [],
 }).write();
 
 const connectDB = async () => {

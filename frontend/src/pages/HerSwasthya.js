@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import herswasthyaService from '../services/herswasthyaService';
 
-const TABS = ['home', 'period', 'workout', 'planner', 'tips', 'clinics', 'coaches', 'teleconsult'];
+const TABS = ['home', 'period', 'workout', 'planner', 'smartwatch', 'tips', 'clinics', 'coaches', 'teleconsult'];
 const FLOW_OPTIONS = ['light', 'medium', 'heavy'];
 const TIP_CATEGORIES = ['all', 'nutrition', 'fitness', 'menstrual', 'mental', 'lifestyle'];
 const DAYS = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
@@ -46,6 +46,14 @@ const HerSwasthya = () => {
 
   // ── Coaches ──
   const [coaches, setCoaches] = useState([]);
+
+  // ── Smartwatch ──
+  const [swBrands, setSwBrands] = useState([]);
+  const [swDevices, setSwDevices] = useState([]);
+  const [swVitals, setSwVitals] = useState(null);
+  const [swLinkForm, setSwLinkForm] = useState({ brand: '', model: '', deviceName: '' });
+  const [swModels, setSwModels] = useState([]);
+  const [swSyncing, setSwSyncing] = useState(false);
 
   const [msg, setMsg] = useState('');
   const [err, setErr] = useState('');
@@ -103,6 +111,18 @@ const HerSwasthya = () => {
   const loadCoaches = useCallback(async () => {
     try { const { data } = await herswasthyaService.getCoaches(); setCoaches(data.coaches); } catch {}
   }, []);
+  const loadSmartwatch = useCallback(async () => {
+    try {
+      const [bRes, dRes, vRes] = await Promise.all([
+        herswasthyaService.getSupportedBrands(),
+        herswasthyaService.getLinkedDevices(),
+        herswasthyaService.getVitals({ days: 7 }),
+      ]);
+      setSwBrands(bRes.data.brands);
+      setSwDevices(dRes.data.devices);
+      setSwVitals(vRes.data);
+    } catch {}
+  }, []);
 
   useEffect(() => {
     if (tab === 'home') loadDashboard();
@@ -113,7 +133,8 @@ const HerSwasthya = () => {
     if (tab === 'workout') loadWorkouts();
     if (tab === 'planner') loadPlanner();
     if (tab === 'coaches') loadCoaches();
-  }, [tab, loadDashboard, loadPeriod, loadTips, loadClinics, loadTeleconsult, loadWorkouts, loadPlanner, loadCoaches]);
+    if (tab === 'smartwatch') loadSmartwatch();
+  }, [tab, loadDashboard, loadPeriod, loadTips, loadClinics, loadTeleconsult, loadWorkouts, loadPlanner, loadCoaches, loadSmartwatch]);
 
   useEffect(() => { if (tab === 'tips') loadTips(); }, [tipCategory, loadTips, tab]);
   useEffect(() => { if (tab === 'workout') loadWorkouts(); }, [wkCategory, loadWorkouts, tab]);
@@ -182,6 +203,51 @@ const HerSwasthya = () => {
     } catch (e) { flash(e.response?.data?.message || 'Failed', true); }
   };
 
+  const handleLinkSmartwatch = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await herswasthyaService.linkSmartwatch(swLinkForm);
+      flash(data.message);
+      setSwLinkForm({ brand: '', model: '', deviceName: '' });
+      setSwModels([]);
+      loadSmartwatch();
+    } catch (e) { flash(e.response?.data?.message || 'Failed to link device', true); }
+  };
+
+  const handleUnlinkSmartwatch = async (id) => {
+    try {
+      const { data } = await herswasthyaService.unlinkSmartwatch(id);
+      flash(data.message);
+      loadSmartwatch();
+    } catch (e) { flash(e.response?.data?.message || 'Failed', true); }
+  };
+
+  const handleSimulateSync = async (deviceId) => {
+    setSwSyncing(true);
+    try {
+      const mockVitals = {
+        deviceId,
+        heartRate: Math.floor(65 + Math.random() * 30),
+        spo2: Math.floor(95 + Math.random() * 5),
+        steps: Math.floor(2000 + Math.random() * 8000),
+        calories: Math.floor(100 + Math.random() * 400),
+        stress: Math.floor(20 + Math.random() * 50),
+        temperature: +(36.1 + Math.random() * 1.2).toFixed(1),
+        sleep: { duration: `${Math.floor(5 + Math.random() * 3)}h ${Math.floor(Math.random() * 60)}m`, quality: ['poor', 'fair', 'good', 'excellent'][Math.floor(Math.random() * 4)] },
+      };
+      const { data } = await herswasthyaService.syncVitals(mockVitals);
+      flash(data.message);
+      loadSmartwatch();
+    } catch (e) { flash(e.response?.data?.message || 'Sync failed', true); }
+    finally { setSwSyncing(false); }
+  };
+
+  const handleBrandChange = (brandName) => {
+    setSwLinkForm({ ...swLinkForm, brand: brandName, model: '' });
+    const brand = swBrands.find((b) => b.brand === brandName);
+    setSwModels(brand ? brand.models : []);
+  };
+
   return (
     <div style={s.wrapper}>
       <button onClick={() => navigate('/dashboard')} style={s.back}>← Dashboard</button>
@@ -207,7 +273,8 @@ const HerSwasthya = () => {
             style={{ ...s.tab, ...(tab === t ? s.tabActive : {}) }}>
             {t === 'home' ? '🏠 Home' : t === 'period' ? '📅 Period' : t === 'tips' ? '💊 Tips' :
              t === 'clinics' ? '🏥 Clinics' : t === 'teleconsult' ? '📱 Consult' :
-             t === 'workout' ? '💪 Workout' : t === 'planner' ? '🗓️ Planner' : '🏃‍♀️ Coaches'}
+             t === 'workout' ? '💪 Workout' : t === 'planner' ? '🗓️ Planner' :
+             t === 'smartwatch' ? '⌚ Smartwatch' : '🏃‍♀️ Coaches'}
           </button>
         ))}
       </div>
@@ -655,6 +722,204 @@ const HerSwasthya = () => {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* ── SMARTWATCH TAB ── */}
+      {tab === 'smartwatch' && (
+        <div>
+          <div style={{ ...s.card, background: 'linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%)', textAlign: 'center' }}>
+            <div style={{ fontSize: '2.5rem' }}>⌚</div>
+            <h3 style={{ color: '#1565c0', margin: '0.25rem 0' }}>Smartwatch Integration</h3>
+            <p style={{ color: '#666', fontSize: '0.9rem' }}>Link your wearable device to track heart rate, steps, SpO2, sleep, and more.</p>
+          </div>
+
+          {/* Linked Devices */}
+          <h4 style={{ color: '#c62828', margin: '1rem 0 0.5rem' }}>📱 My Devices</h4>
+          {swDevices.length === 0 && (
+            <div style={{ ...s.card, textAlign: 'center', color: '#aaa' }}>
+              <div style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>⌚</div>
+              <p>No smartwatch linked yet. Link one below to start tracking your health data!</p>
+            </div>
+          )}
+          {swDevices.map((d) => (
+            <div key={d._id} style={{ ...s.card, borderLeft: '4px solid #1565c0' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <h4 style={{ color: '#1565c0', margin: '0 0 0.2rem' }}>⌚ {d.deviceName}</h4>
+                  <div style={{ fontSize: '0.85rem', color: '#888' }}>{d.brand} · {d.model}</div>
+                  <div style={{ fontSize: '0.8rem', color: '#aaa', marginTop: '0.2rem' }}>
+                    Linked: {new Date(d.linkedAt).toLocaleDateString()}
+                    {d.lastSyncAt && <span> · Last sync: {new Date(d.lastSyncAt).toLocaleString()}</span>}
+                  </div>
+                </div>
+                <span style={{ ...s.badge, background: '#e8f5e9', color: '#2e7d32' }}>✅ {d.status}</span>
+              </div>
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.5rem' }}>
+                <button onClick={() => handleSimulateSync(d._id)} disabled={swSyncing}
+                  style={{ ...s.btn, padding: '0.35rem 0.75rem', fontSize: '0.8rem', background: '#1565c0', opacity: swSyncing ? 0.6 : 1 }}>
+                  {swSyncing ? '⏳ Syncing…' : '🔄 Sync Now'}
+                </button>
+                <button onClick={() => handleUnlinkSmartwatch(d._id)}
+                  style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem', background: 'none', border: '1px solid #ef5350', color: '#c62828', borderRadius: '8px', cursor: 'pointer' }}>
+                  Unlink
+                </button>
+              </div>
+            </div>
+          ))}
+
+          {/* Link New Device */}
+          <details style={s.card} open={swDevices.length === 0}>
+            <summary style={{ cursor: 'pointer', fontWeight: 600, color: '#1565c0' }}>+ Link a New Smartwatch</summary>
+            <form onSubmit={handleLinkSmartwatch} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.75rem' }}>
+              <div>
+                <label style={s.label}>Brand *</label>
+                <select value={swLinkForm.brand} onChange={(e) => handleBrandChange(e.target.value)} required style={s.input}>
+                  <option value="">Select brand…</option>
+                  {swBrands.map((b) => <option key={b.brand} value={b.brand}>{b.brand}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={s.label}>Model *</label>
+                <select value={swLinkForm.model} onChange={(e) => setSwLinkForm({ ...swLinkForm, model: e.target.value })}
+                  required disabled={!swLinkForm.brand} style={{ ...s.input, opacity: swLinkForm.brand ? 1 : 0.5 }}>
+                  <option value="">{swLinkForm.brand ? 'Select model…' : 'Select brand first'}</option>
+                  {swModels.map((m) => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+              <div>
+                <label style={s.label}>Device Name (optional)</label>
+                <input placeholder="e.g. My Fitness Watch" value={swLinkForm.deviceName}
+                  onChange={(e) => setSwLinkForm({ ...swLinkForm, deviceName: e.target.value })} style={s.input} />
+              </div>
+              <button type="submit" style={{ ...s.btn, background: '#1565c0' }} disabled={!swLinkForm.brand || !swLinkForm.model}>
+                ⌚ Link Smartwatch
+              </button>
+            </form>
+          </details>
+
+          {/* Vitals Dashboard */}
+          {swVitals && swVitals.latest && (
+            <>
+              <h4 style={{ color: '#c62828', margin: '1rem 0 0.5rem' }}>📊 Latest Vitals</h4>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '0.5rem' }}>
+                <div style={{ ...s.card, textAlign: 'center', padding: '0.75rem' }}>
+                  <div style={{ fontSize: '1.5rem' }}>❤️</div>
+                  <div style={{ fontWeight: 700, color: '#c62828', fontSize: '1.3rem' }}>{swVitals.latest.heartRate || '—'}</div>
+                  <small style={{ color: '#888' }}>Heart Rate (bpm)</small>
+                </div>
+                <div style={{ ...s.card, textAlign: 'center', padding: '0.75rem' }}>
+                  <div style={{ fontSize: '1.5rem' }}>🫁</div>
+                  <div style={{ fontWeight: 700, color: '#1565c0', fontSize: '1.3rem' }}>{swVitals.latest.spo2 || '—'}%</div>
+                  <small style={{ color: '#888' }}>SpO2</small>
+                </div>
+                <div style={{ ...s.card, textAlign: 'center', padding: '0.75rem' }}>
+                  <div style={{ fontSize: '1.5rem' }}>🌡️</div>
+                  <div style={{ fontWeight: 700, color: '#e65100', fontSize: '1.3rem' }}>{swVitals.latest.temperature || '—'}°C</div>
+                  <small style={{ color: '#888' }}>Temperature</small>
+                </div>
+                <div style={{ ...s.card, textAlign: 'center', padding: '0.75rem' }}>
+                  <div style={{ fontSize: '1.5rem' }}>👣</div>
+                  <div style={{ fontWeight: 700, color: '#2e7d32', fontSize: '1.3rem' }}>{swVitals.latest.steps?.toLocaleString() || '—'}</div>
+                  <small style={{ color: '#888' }}>Steps</small>
+                </div>
+                <div style={{ ...s.card, textAlign: 'center', padding: '0.75rem' }}>
+                  <div style={{ fontSize: '1.5rem' }}>🔥</div>
+                  <div style={{ fontWeight: 700, color: '#e65100', fontSize: '1.3rem' }}>{swVitals.latest.calories || '—'}</div>
+                  <small style={{ color: '#888' }}>Calories</small>
+                </div>
+                <div style={{ ...s.card, textAlign: 'center', padding: '0.75rem' }}>
+                  <div style={{ fontSize: '1.5rem' }}>😰</div>
+                  <div style={{ fontWeight: 700, color: '#7b1fa2', fontSize: '1.3rem' }}>{swVitals.latest.stress || '—'}</div>
+                  <small style={{ color: '#888' }}>Stress Level</small>
+                </div>
+              </div>
+
+              {swVitals.latest.sleep && (
+                <div style={{ ...s.card, borderLeft: '4px solid #7b1fa2' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                    <span style={{ fontSize: '1.8rem' }}>😴</span>
+                    <div>
+                      <div style={{ fontWeight: 700, color: '#7b1fa2', fontSize: '1.1rem' }}>Sleep: {swVitals.latest.sleep.duration}</div>
+                      <div style={{ fontSize: '0.85rem', color: '#888' }}>Quality: <span style={{ textTransform: 'capitalize', fontWeight: 600,
+                        color: swVitals.latest.sleep.quality === 'excellent' ? '#2e7d32' : swVitals.latest.sleep.quality === 'good' ? '#4caf50' :
+                               swVitals.latest.sleep.quality === 'fair' ? '#f57f17' : '#c62828'
+                      }}>{swVitals.latest.sleep.quality}</span></div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* 7-Day Summary */}
+              {swVitals.summary && swVitals.summary.entries > 0 && (
+                <>
+                  <h4 style={{ color: '#c62828', margin: '1rem 0 0.5rem' }}>📈 7-Day Summary</h4>
+                  <div style={{ ...s.card, background: '#f3e5f5' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem', textAlign: 'center' }}>
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#c62828', fontSize: '1.2rem' }}>{swVitals.summary.avgHeartRate || '—'}</div>
+                        <small>Avg Heart Rate (bpm)</small>
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#1565c0', fontSize: '1.2rem' }}>{swVitals.summary.avgSpo2 || '—'}%</div>
+                        <small>Avg SpO2</small>
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#2e7d32', fontSize: '1.2rem' }}>{swVitals.summary.totalSteps?.toLocaleString()}</div>
+                        <small>Total Steps</small>
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#e65100', fontSize: '1.2rem' }}>{swVitals.summary.totalCalories?.toLocaleString()}</div>
+                        <small>Total Calories</small>
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#7b1fa2', fontSize: '1.2rem' }}>{swVitals.summary.avgStress || '—'}</div>
+                        <small>Avg Stress</small>
+                      </div>
+                      <div>
+                        <div style={{ fontWeight: 700, color: '#555', fontSize: '1.2rem' }}>{swVitals.summary.entries}</div>
+                        <small>Sync Records</small>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Vitals History */}
+              {swVitals.history && swVitals.history.length > 0 && (
+                <>
+                  <h4 style={{ color: '#c62828', margin: '1rem 0 0.5rem' }}>🕐 Recent Syncs</h4>
+                  {swVitals.history.slice(0, 10).map((v) => (
+                    <div key={v._id} style={{ ...s.card, padding: '0.75rem 1rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '0.3rem' }}>
+                        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                          {v.heartRate && <span style={s.badge}>❤️ {v.heartRate} bpm</span>}
+                          {v.spo2 && <span style={s.badge}>🫁 {v.spo2}%</span>}
+                          {v.steps && <span style={{ ...s.badge, background: '#e8f5e9' }}>👣 {v.steps.toLocaleString()}</span>}
+                          {v.calories && <span style={{ ...s.badge, background: '#fff3e0' }}>🔥 {v.calories}</span>}
+                          {v.stress != null && <span style={{ ...s.badge, background: '#f3e5f5' }}>😰 {v.stress}</span>}
+                          {v.temperature && <span style={s.badge}>🌡️ {v.temperature}°C</span>}
+                        </div>
+                        <small style={{ color: '#aaa' }}>{new Date(v.syncedAt).toLocaleString()}</small>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+            </>
+          )}
+
+          {/* Supported brands info */}
+          <div style={{ ...s.card, background: '#e3f2fd', marginTop: '1rem' }}>
+            <h4 style={{ color: '#1565c0', marginBottom: '0.5rem' }}>Supported Smartwatches</h4>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
+              {swBrands.map((b) => (
+                <div key={b.brand} style={{ background: '#fff', padding: '0.4rem 0.75rem', borderRadius: '8px', fontSize: '0.8rem' }}>
+                  <strong>{b.brand}</strong>: {b.models.join(', ')}
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       )}
 

@@ -1,11 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
 
 const HerSuraksha = () => {
   const navigate = useNavigate();
   const [sosTriggered, setSosTriggered] = useState(false);
   const [location, setLocation] = useState(null);
   const [loadingLoc, setLoadingLoc] = useState(false);
+  const [safetyTips, setSafetyTips] = useState([]);
+
+  const loadTips = useCallback(async () => {
+    try {
+      const { data } = await api.get('/users/safety-tips/hersuraksha');
+      if (data.data && data.data.tips) setSafetyTips(data.data.tips);
+    } catch {}
+  }, []);
+
+  useEffect(() => { loadTips(); }, [loadTips]);
 
   const fetchLocation = () => {
     setLoadingLoc(true);
@@ -78,6 +89,28 @@ const HerSuraksha = () => {
           </div>
         )}
       </div>
+
+      {/* AI Safety Tips */}
+      {safetyTips.length > 0 && (
+        <div style={{ maxWidth: '500px', margin: '1rem auto 0' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.75rem' }}>
+            <span style={{ fontSize: '1.2rem' }}>🤖</span>
+            <h3 style={{ color: '#c62828', margin: 0, fontSize: '1rem' }}>AI Safety Tips for You</h3>
+          </div>
+          {safetyTips.map((tip) => (
+            <div key={tip.id} style={{ background: '#fff', padding: '0.8rem 1rem', borderRadius: '10px', borderLeft: tip.priority === 'high' ? '4px solid #c62828' : '4px solid #f57f17', boxShadow: '0 2px 8px rgba(198,40,40,0.06)', marginBottom: '0.6rem' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
+                <strong style={{ color: '#c62828', fontSize: '0.9rem' }}>{tip.title}</strong>
+                {tip.priority === 'high' && (
+                  <span style={{ background: '#ffebee', color: '#c62828', padding: '0.1rem 0.4rem', borderRadius: '8px', fontSize: '0.65rem', fontWeight: 600 }}>⚠️ HIGH</span>
+                )}
+              </div>
+              <p style={{ color: '#555', fontSize: '0.85rem', lineHeight: 1.5, margin: '0.2rem 0' }}>{tip.tip}</p>
+              <span style={{ display: 'inline-block', background: '#fce4ec', color: '#c62828', padding: '0.1rem 0.4rem', borderRadius: '8px', fontSize: '0.7rem' }}>#{tip.tag}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

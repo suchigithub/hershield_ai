@@ -8,6 +8,10 @@ const {
   getTherapists,
   getReflectionPrompt,
   getRandomAffirmation,
+  getYouTubeVideos,
+  getVideoById,
+  getAINotifications,
+  VIDEO_CATEGORIES,
 } = require('../services/wellnessService');
 
 // ╔══════════════════════════════════════════════╗
@@ -296,6 +300,50 @@ exports.getDailyWellness = (req, res) => {
     });
   } catch (err) {
     console.error('[HerShanti] getDailyWellness error:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// ╔══════════════════════════════════════════════╗
+// ║  MOTIVATIONAL VIDEOS                          ║
+// ╚══════════════════════════════════════════════╝
+
+// GET /api/hershanti/videos
+exports.getVideos = (req, res) => {
+  try {
+    const { category } = req.query;
+    const videos = getYouTubeVideos(category);
+    return res.json({ videos, categories: VIDEO_CATEGORIES });
+  } catch (err) {
+    console.error('[HerShanti] getVideos error:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// GET /api/hershanti/videos/:id
+exports.getVideoById = (req, res) => {
+  try {
+    const video = getVideoById(req.params.id);
+    if (!video) return res.status(404).json({ message: 'Video not found.' });
+    return res.json({ video });
+  } catch (err) {
+    console.error('[HerShanti] getVideoById error:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// ╔══════════════════════════════════════════════╗
+// ║  AI NOTIFICATIONS                             ║
+// ╚══════════════════════════════════════════════╝
+
+// GET /api/hershanti/notifications
+exports.getNotifications = (req, res) => {
+  try {
+    const moodAnalytics = MoodEntry.getAnalytics(req.user.id, 7);
+    const notifications = getAINotifications(req.user.id, moodAnalytics);
+    return res.json({ notifications });
+  } catch (err) {
+    console.error('[HerShanti] getNotifications error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };

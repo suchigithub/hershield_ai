@@ -68,4 +68,11 @@ router.post(
   c.postGroupMessage
 );
 
+// ── Motivational Videos ───────────────────────
+router.get('/videos', c.getVideos);
+router.get('/videos/:id', c.getVideoById);
+
+// ── AI Notifications ──────────────────────────
+router.get('/notifications', c.getNotifications);
+
 module.exports = router;

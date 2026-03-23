@@ -27,6 +27,13 @@ const hershantiService = {
   leaveGroup: (id) => api.post(`/hershanti/groups/${id}/leave`),
   getGroupMessages: (id) => api.get(`/hershanti/groups/${id}/messages`),
   postGroupMessage: (id, message) => api.post(`/hershanti/groups/${id}/messages`, { message }),
+
+  // ── Motivational Videos ──
+  getVideos: (category) => api.get('/hershanti/videos', { params: { category } }),
+  getVideoById: (id) => api.get(`/hershanti/videos/${id}`),
+
+  // ── AI Notifications ──
+  getNotifications: () => api.get('/hershanti/notifications'),
 };
 
 export default hershantiService;

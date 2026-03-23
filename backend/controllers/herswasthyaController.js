@@ -1,6 +1,7 @@
 const PeriodLog = require('../models/PeriodLog');
 const Teleconsultation = require('../models/Teleconsultation');
 const { WorkoutLog, WorkoutPlan } = require('../models/Workout');
+const { SmartwatchDevice, SmartwatchVitals, SUPPORTED_BRANDS } = require('../models/Smartwatch');
 const {
   getHealthTips,
   getNearbyClinics,
@@ -341,6 +342,126 @@ exports.getCoaches = (req, res) => {
     return res.json({ coaches });
   } catch (err) {
     console.error('[HerSwasthya] getCoaches error:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// ╔══════════════════════════════════════════════╗
+// ║  SMARTWATCH                                   ║
+// ╚══════════════════════════════════════════════╝
+
+// GET /api/herswasthya/smartwatch/brands
+exports.getSupportedBrands = (req, res) => {
+  return res.json({ brands: SUPPORTED_BRANDS });
+};
+
+// GET /api/herswasthya/smartwatch/devices
+exports.getLinkedDevices = (req, res) => {
+  try {
+    const devices = SmartwatchDevice.findByUser(req.user.id);
+    return res.json({ devices });
+  } catch (err) {
+    console.error('[HerSwasthya] getLinkedDevices error:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// POST /api/herswasthya/smartwatch/link
+exports.linkSmartwatch = (req, res) => {
+  try {
+    const { deviceName, brand, model } = req.body;
+
+    // Validate brand/model
+    const brandEntry = SUPPORTED_BRANDS.find((b) => b.brand.toLowerCase() === brand.toLowerCase());
+    if (!brandEntry) {
+      return res.status(400).json({ message: `Unsupported brand: ${brand}. Check /smartwatch/brands for supported devices.` });
+    }
+    const validModel = brandEntry.models.find((m) => m.toLowerCase() === model.toLowerCase());
+    if (!validModel) {
+      return res.status(400).json({ message: `Unsupported model: ${model}. Supported ${brand} models: ${brandEntry.models.join(', ')}` });
+    }
+
+    // Check if same model already linked
+    const existing = SmartwatchDevice.findByUser(req.user.id);
+    const duplicate = existing.find((d) => d.brand.toLowerCase() === brand.toLowerCase() && d.model.toLowerCase() === model.toLowerCase());
+    if (duplicate) {
+      return res.status(409).json({ message: `${brand} ${model} is already linked.`, device: duplicate });
+    }
+
+    const device = SmartwatchDevice.link({
+      user: req.user.id,
+      deviceName: deviceName || `${brand} ${validModel}`,
+      brand: brandEntry.brand,
+      model: validModel,
+    });
+
+    return res.status(201).json({
+      message: `⌚ ${device.deviceName} linked successfully!`,
+      device,
+    });
+  } catch (err) {
+    console.error('[HerSwasthya] linkSmartwatch error:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// DELETE /api/herswasthya/smartwatch/devices/:id
+exports.unlinkSmartwatch = (req, res) => {
+  try {
+    const device = SmartwatchDevice.findById(req.params.id);
+    if (!device) return res.status(404).json({ message: 'Device not found.' });
+    if (device.user !== req.user.id) return res.status(403).json({ message: 'Access denied.' });
+
+    SmartwatchDevice.unlink(req.params.id);
+    return res.json({ message: `${device.deviceName} unlinked. Health data from this device has been removed.` });
+  } catch (err) {
+    console.error('[HerSwasthya] unlinkSmartwatch error:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// POST /api/herswasthya/smartwatch/sync
+exports.syncVitals = (req, res) => {
+  try {
+    const { deviceId, heartRate, spo2, steps, calories, sleep, stress, temperature } = req.body;
+
+    const device = SmartwatchDevice.findById(deviceId);
+    if (!device) return res.status(404).json({ message: 'Device not found. Link your smartwatch first.' });
+    if (device.user !== req.user.id) return res.status(403).json({ message: 'Access denied.' });
+
+    const entry = SmartwatchVitals.sync({
+      user: req.user.id,
+      deviceId,
+      heartRate,
+      spo2,
+      steps,
+      calories,
+      sleep,
+      stress,
+      temperature,
+    });
+
+    return res.status(201).json({
+      message: '📊 Vitals synced from your smartwatch!',
+      vitals: entry,
+    });
+  } catch (err) {
+    console.error('[HerSwasthya] syncVitals error:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// GET /api/herswasthya/smartwatch/vitals
+exports.getVitals = (req, res) => {
+  try {
+    const limit = Number(req.query.limit) || 50;
+    const latest = SmartwatchVitals.getLatest(req.user.id);
+    const history = SmartwatchVitals.findByUser(req.user.id, limit);
+    const summary = SmartwatchVitals.getSummary(req.user.id, Number(req.query.days) || 7);
+
+    return res.json({ latest, history, summary });
+  } catch (err) {
+    console.error('[HerSwasthya] getVitals error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };

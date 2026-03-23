@@ -14,12 +14,14 @@ const { z } = require('zod');
 // ── Load services ─────────────────────────────
 const { generateOTP } = require('./services/otpService');
 const { getHealthTips, getNearbyClinics, getDoctors } = require('./services/healthService');
-const { getMeditations, getTherapists, getReflectionPrompt, getRandomAffirmation } = require('./services/wellnessService');
+const { getMeditations, getTherapists, getReflectionPrompt, getRandomAffirmation, getYouTubeVideos } = require('./services/wellnessService');
 const { getWorkouts, getCoaches } = require('./services/workoutService');
+const { SUPPORTED_BRANDS } = require('./models/Smartwatch');
 const { getCourses: getSkillCourses, getJobs, getMentors, getHigherStudies, getCommunityPrograms } = require('./services/careerService');
 const { getScholarships, getCourses: getEduCourses, getSkillPrograms, getCertifications, getFamilyLearning } = require('./services/educationService');
 const { getAgeGroups, getSchemes, checkEligibility, getInsurance, getRights } = require('./services/schemesService');
 const { generateUPILink, getFinanceTips } = require('./services/upiService');
+const { getSafetyTips, getDailySafetyDigest, getContextualTip } = require('./services/safetyTipsService');
 
 // ── Create MCP Server ─────────────────────────
 const server = new McpServer({
@@ -46,6 +48,28 @@ server.tool(
         text: `🚨 SOS ALERT TRIGGERED!\n\n${location}\n\n📞 Emergency Contacts:\n• Police: 112\n• Women Helpline: 181\n• Ambulance: 108\n• Child Helpline: 1098\n\n⚠️ Stay calm. Help is on the way.\nShare your live location with trusted contacts immediately.`
       }]
     };
+  }
+);
+
+server.tool(
+  'safety_tips',
+  'Get AI safety suggestions for a specific HERSHIELD module or all modules. Modules: hersuraksha, herpaisa, herswasthya, hershanti, herudaan, heradhikar, hershiksha.',
+  { module: z.string().optional().describe('Module name (e.g. hersuraksha, herpaisa). Leave empty for all modules.'), context: z.string().optional().describe('Context: travel, digital, fraud, emergency, workplace, legal, health, mental, general') },
+  async ({ module, context }) => {
+    if (module) {
+      const data = getSafetyTips(module);
+      if (data && data.tips) {
+        const text = data.tips.map(t => `${t.priority === 'high' ? '⚠️' : '💡'} **${t.title}**\n${t.tip}\n#${t.tag}`).join('\n\n');
+        return { content: [{ type: 'text', text: `${data.icon} ${data.module} — Safety Tips:\n\n${text}` }] };
+      }
+    }
+    if (context) {
+      const tip = getContextualTip(context);
+      return { content: [{ type: 'text', text: `${tip.icon} **${tip.title}** (${tip.moduleName})\n\n${tip.tip}\n\n#${tip.tag}` }] };
+    }
+    const digest = getDailySafetyDigest();
+    const text = digest.map(d => `${d.icon} **${d.moduleName}**\n${d.tip.priority === 'high' ? '⚠️' : '💡'} ${d.tip.title}: ${d.tip.tip}`).join('\n\n---\n\n');
+    return { content: [{ type: 'text', text: `🤖 AI Safety Digest:\n\n${text}` }] };
   }
 );
 
@@ -108,6 +132,16 @@ server.tool(
   }
 );
 
+server.tool(
+  'smartwatch_brands',
+  'Get list of supported smartwatch brands and models that can be linked to the app.',
+  {},
+  async () => {
+    const text = SUPPORTED_BRANDS.map(b => `⌚ **${b.brand}**: ${b.models.join(', ')}`).join('\n');
+    return { content: [{ type: 'text', text: `⌚ Supported Smartwatches:\n\n${text}\n\nLink your device via HerSwasthya > Smartwatch tab to track heart rate, SpO2, steps, sleep, stress, and more.` }] };
+  }
+);
+
 // ════════════════════════════════════════════════
 // 🧘 HerShanti — Mental Wellness
 // ════════════════════════════════════════════════
@@ -142,6 +176,17 @@ server.tool(
     const therapists = getTherapists({ speciality, city, available: true });
     const text = therapists.map(t => `👩‍⚕️ **${t.name}** — ${t.speciality}\n${t.experience} · ⭐ ${t.rating} · ${t.mode}\n${t.bio}\nLanguages: ${t.languages.join(', ')}`).join('\n\n');
     return { content: [{ type: 'text', text: `🧑‍⚕️ Therapists:\n\n${text}` }] };
+  }
+);
+
+server.tool(
+  'motivational_videos',
+  'Get motivational YouTube video links for mental wellness. Categories: self-love, stress, happiness, meditation, confidence, self-care, anxiety, growth, yoga, gratitude, sleep, anger.',
+  { category: z.string().optional().describe('Video category (e.g. stress, meditation, confidence)') },
+  async ({ category }) => {
+    const videos = getYouTubeVideos(category);
+    const text = videos.map(v => `🎥 **${v.title}** — ${v.speaker}\n${v.description}\n⏱ ${v.duration} · #${v.category}\n▶️ https://www.youtube.com/watch?v=${v.youtubeId}`).join('\n\n---\n\n');
+    return { content: [{ type: 'text', text: `🎥 Motivational Videos:\n\n${text}` }] };
   }
 );
 

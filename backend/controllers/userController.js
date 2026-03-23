@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const { getSafetyTips, getDailySafetyDigest, getContextualTip } = require('../services/safetyTipsService');
 
 // ────────────────────────────────────────────────
 // GET /api/users/me  (auth required)
@@ -60,6 +61,48 @@ exports.getAllUsers = async (req, res) => {
     return res.json({ users: users.map(User.sanitize) });
   } catch (err) {
     console.error('[HERSHIELD] getAllUsers error:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// ────────────────────────────────────────────────
+// GET /api/users/safety-tips  (AI safety digest)
+// ────────────────────────────────────────────────
+exports.getSafetyDigest = (req, res) => {
+  try {
+    const digest = getDailySafetyDigest();
+    return res.json({ digest });
+  } catch (err) {
+    console.error('[HERSHIELD] getSafetyDigest error:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// ────────────────────────────────────────────────
+// GET /api/users/safety-tips/:module  (per-module tips)
+// ────────────────────────────────────────────────
+exports.getModuleSafetyTips = (req, res) => {
+  try {
+    const { module } = req.params;
+    const { tag } = req.query;
+    const data = getSafetyTips(module, tag);
+    return res.json({ data });
+  } catch (err) {
+    console.error('[HERSHIELD] getModuleSafetyTips error:', err);
+    return res.status(500).json({ message: 'Internal server error.' });
+  }
+};
+
+// ────────────────────────────────────────────────
+// GET /api/users/safety-tip  (contextual single tip)
+// ────────────────────────────────────────────────
+exports.getContextualSafetyTip = (req, res) => {
+  try {
+    const context = req.query.context || 'general';
+    const tip = getContextualTip(context);
+    return res.json({ tip });
+  } catch (err) {
+    console.error('[HERSHIELD] getContextualSafetyTip error:', err);
     return res.status(500).json({ message: 'Internal server error.' });
   }
 };

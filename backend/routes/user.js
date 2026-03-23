@@ -7,6 +7,9 @@ const {
   updateProfile,
   deleteAccount,
   getAllUsers,
+  getSafetyDigest,
+  getModuleSafetyTips,
+  getContextualSafetyTip,
 } = require('../controllers/userController');
 
 const router = express.Router();
@@ -30,6 +33,11 @@ router.put(
 
 // ── Delete current user ──
 router.delete('/me', deleteAccount);
+
+// ── AI Safety Suggestions ──
+router.get('/safety-tips', getSafetyDigest);
+router.get('/safety-tips/:module', getModuleSafetyTips);
+router.get('/safety-tip', getContextualSafetyTip);
 
 // ── Admin: list all users ──
 router.get('/', getAllUsers);
